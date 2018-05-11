@@ -7,11 +7,10 @@ const https = require('http');
 
 var t = function () {
     const options = {
-        hostname: '222.73.56.202',
+        // hostname: 'www.bithe.com',
+        hostname: '127.0.0.1',
         port: 7001,
-        // hostname: '127.0.0.1',
-        // port: 58259,
-        path: '/v1/quot/ranking',
+        path: '/w100/v1/quot/ranking',
         method: 'GET',
         headers: {
             ver: "V1.1.1",
@@ -26,7 +25,10 @@ var t = function () {
     const req = https.request(options, res => {
         console.log('statusCode:', res.statusCode);
         console.log('headers:', res.headers);
-
+        if (res.statusCode == 301) {
+            console.log(res.headers.location);
+            // t();
+          } 
         res.on('data', d => {
             process.stdout.write(d);
         });
@@ -41,6 +43,4 @@ var t = function () {
     req.end();
 }
 
-setInterval(function () {
-    t()}, 2000
-);
+t();

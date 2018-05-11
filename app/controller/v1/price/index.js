@@ -14,8 +14,8 @@ class IndexController extends Controller {
                 token: { type: 'string' }
             });
             
-        const k0 = ctx.weex_ws_get0Kline();
-        const k1 = ctx.weex_ws_get1Kline();
+        const k0 = app.weexWs.get0Kline();
+        const k1 = app.weexWs.get1Kline();
 
         const markets = ctx.helper.getMarkets()["USD"];
         var t = [];

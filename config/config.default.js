@@ -17,20 +17,17 @@ module.exports = appInfo => {
   // use for cookie sign key, should change to your own and keep security
   config.keys = appInfo.name + '_1524152383762_782';
 
-  // add your config here
-  // config.middleware = [];
-  // config.weexurl = "https://wwwapp.weex.com:8443/";
-
-  // config.wsurl = "ws://ws.weexpro.com";
   config.weexHttps = {
-    client:{
-      url: "https://wwwapp.weex.com:8443/"
+    client: {
+      // url: "https://wwwapp.weex.com:8443/"
+      url: "https://www.bithe.com/"
     }
   };
 
   config.weexWs = {
-    client:{
-      url: "ws://ws.weexpro.com"
+    client: {
+      // url: "ws://ws.weexpro.com"
+      url: "wss://ws.bithe.com"
     }
   };
 
