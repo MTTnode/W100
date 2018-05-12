@@ -17,9 +17,9 @@ class ConfigController extends Controller {
         ctx.body = {
             code: 0,
             data: [
-                { "type": 0, "imgurl": "http://chuantu.biz/t6/305/1525767305x-1404792891.png", deturl: "", id: "134e" },
-                { "type": 1, "imgurl": "http://chuantu.biz/t6/305/1525767334x-1404792891.png", deturl: "http://www.baidu.com", id: "34e2" },
-                { "type": 1, "imgurl": "http://chuantu.biz/t6/297/1524905116x-1404795690.png", deturl: "http://www.baidu.com", id: "we3" },
+                { "type": 0, "imgurl": "http://222.73.56.202/w100/W100_img/a-750x380.png", deturl: "", id: "134e" },
+                { "type": 0, "imgurl": "http://222.73.56.202/w100/W100_img/b-750x380.png", deturl: "", id: "34e2" },
+                { "type": 0, "imgurl": "http://222.73.56.202/w100/W100_img/c-750x380.png", deturl: "", id: "we3" },
             ],
             message: "OK",
         };
