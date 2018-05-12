@@ -17,16 +17,15 @@ class IndexController extends Controller {
         const k0 = app.weexWs.get0Kline();
         const k1 = app.weexWs.get1Kline();
 
-        const markets = ctx.helper.getMarkets()["USD"];
+        const marketInfos = app.weexWs.getTodaySubscribe()["USD"];
+        console.log(marketInfos,"===========");
         var t = [];
-
+        var markets = Object.keys(marketInfos);
         for (var i = 0; i < markets.length; i++) {
-            let market = markets[i];
-            let tt = ctx.helper.getPriceChange(k1["USD"][market], k0["USD"][market]);
-            tt["market"] = market;
-            t.push(tt);
+            let market = marketInfos[markets[i]];
+            t.push(market);
         }
-
+        console.log(t);
         let d = _.orderBy(t, ['priceChangePercent'], ['desc']); 
 
         let res = {

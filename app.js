@@ -4,8 +4,8 @@ module.exports = app => {
     const ctx = app.createAnonymousContext();
     ctx.logger.info("init server begin");
     ctx.app.weexWs.init(ctx.helper.getMarkets(), function () {
-      ctx.app.weexWs.buildKline(0);
-      ctx.app.weexWs.buildKline(1);
+      
+      ctx.app.weexWs.buildTodaySubscribe();
       ctx.logger.info("init server end");
     });
   });

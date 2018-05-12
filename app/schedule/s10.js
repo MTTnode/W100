@@ -4,7 +4,6 @@ module.exports = {
         type: 'all',
     },
     async task(ctx) {
-        ctx.app.weexWs.buildKline(1);
         ctx.app.weexHttps.setRate(ctx);
     },
     resetOtherInfo() {
