@@ -17,7 +17,7 @@ class UserService extends Service {
         var total = 0;
         var marketsKey = Object.keys(userAsset.data.markets);
         for (var i = 0; i < marketsKey.length; i++) {
-            total = kline0[marketsKey[i]].open * userAsset.data.markets[marketsKey[i]].v;
+            total += kline0[marketsKey[i]].open * userAsset.data.markets[marketsKey[i]].v;
         }
         total += userAsset.data.USD;
         var ret = ctx.helper.getPriceChange(userAsset.data.total, total);
