@@ -10,14 +10,14 @@ class UserService extends Service {
             return userAsset;
         }
         //获取当天0点的值
-        var kline0 = app.weexWs.get0Kline()["USD"];
+        var kline0 = app.weexWs.getTodaySubscribe()["USD"];
         //获取当前汇率
         var rate = app.weexHttps.getRate();
 
         var total = 0;
         var marketsKey = Object.keys(userAsset.data.markets);
         for (var i = 0; i < marketsKey.length; i++) {
-            total = kline0[marketsKey[i]] * userAsset.data.markets[marketsKey[i]].v;
+            total = kline0[marketsKey[i]].open * userAsset.data.markets[marketsKey[i]].v;
         }
         total += userAsset.data.USD;
         var ret = ctx.helper.getPriceChange(userAsset.data.total, total);

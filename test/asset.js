@@ -7,8 +7,8 @@ const options = {
     hostname: '222.73.56.202',
     port: 7001    ,
 
-    //  hostname: '127.0.0.1',
-    // port: 59606    ,
+     hostname: '127.0.0.1',
+    port: 59606    ,
 
     path: '/v1/user/asset',
     method: 'GET',
