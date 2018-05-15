@@ -38,6 +38,12 @@ exports.validate = {
 //     path: path.join(__dirname, '../lib/plugin/egg-ZB'),
 // };
 
+//defend
+exports.defend = {
+  enable: true,
+  path: path.join(__dirname, '../lib/plugin/egg-defend'),
+};
+
 //redis config
 exports.redis = {
     enable: true,

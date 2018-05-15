@@ -12,4 +12,18 @@ module.exports = app => {
   router.get('/w100/v1/transaction/getMarkets', controller.v1.transaction.index.getMarkets);//获取所有交易对
   router.get('/w100/v1/aid/config/banner',  controller.v1.aid.config.banner);//banner公告
   router.get('/w100/v1/aid/exchage/quot', controller.v1.aid.exchange.quot);//获取其他交易所数据
+  router.get('/ad/stat', controller.ad.statistics.index); //后台管理统计
+  router.get('/ad/banner', controller.ad.config.banner);  //banner配置
+  router.post('/ad/saveBanner', controller.ad.config.saveBanner);  //banner保存
+  router.post('/ad/delBanner', controller.ad.config.delBanner);  //banner删除
+  router.get('/ad/transact', controller.ad.config.transact);  //交易对配置
+  router.post('/ad/saveTransact', controller.ad.config.saveTransact);  //交易对保存
+  router.get('*', async (ctx, next) => {
+    ctx.service.httpDefend.addHttp(ctx, 404);
+    ctx.body = { status : 404, message: 'Not Found' };
+  });
+  router.post('*', async (ctx, next) => {
+    ctx.service.httpDefend.addHttp(ctx, 404);
+    ctx.body = { status : 404, message: 'Not Found' };
+  });
 };

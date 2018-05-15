@@ -12,7 +12,7 @@ module.exports = appInfo => {
   };
 
   // 加载 errorHandler 中间件
-  config.middleware = ['errorHandler'];
+  config.middleware = ['httpDefend', 'errorHandler'];
 
   // use for cookie sign key, should change to your own and keep security
   config.keys = appInfo.name + '_1524152383762_782';

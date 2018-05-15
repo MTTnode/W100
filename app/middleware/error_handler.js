@@ -14,6 +14,8 @@ module.exports = () => {
 
             // 从 error 对象上读出各个属性，设置到响应中
             ctx.body = { code: 1001, message: error };
+            //参数错误记录http请求
+            ctx.service.httpDefend.addHttp(ctx, 1001);
             if (status === 422) {
                 ctx.body.detail = err.errors;
             }
