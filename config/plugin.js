@@ -60,3 +60,15 @@ exports.weexHttps = {
     enable: true,
     package: 'egg-weex-https',
 };
+
+//egg-logrotator
+exports.logrotator = {
+  enable: true,
+  package: 'egg-logrotator'
+};
+
+//egg-mongoose
+exports.mongoose = {
+  enable: true,
+  package: 'egg-mongoose',
+};

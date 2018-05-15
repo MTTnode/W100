@@ -49,6 +49,28 @@ module.exports = appInfo => {
     }
   }
 
+  //weexLogger config
+  config.customLogger = {
+    weexLogger: {
+      file: path.join(appInfo.root, 'logs/weexLogger.log'),
+      outputJSON: true,
+    }
+  }
+
+  //egg-logrotator
+  config.logrotator = {
+    filesRotateByHour: [
+      path.join(appInfo.root, 'logs', appInfo.name, 'weexLogger.json.log'),
+    ],                                // 需要按小时切割的文件
+    hourDelimiter: '-',               // 按照小时切割的文件, 小时部分的分隔符.
+  };
+
+  //egg-mongoose
+  config.mongoose = {
+    url: 'mongodb://127.0.0.1:27017/weexdb',
+    options: {}
+  };
+
   return config;
 };
 
