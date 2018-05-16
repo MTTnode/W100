@@ -15,9 +15,8 @@ class IndexController extends Controller {
                 token: { type: 'string' }
             });
 
-        const markets = ctx.helper.getMarkets();
+        const markets = await ctx.service.banner.transactList();
         var results = [];
-
         var bases = Object.keys(markets);
         for (var i = 0; i < bases.length; i++) {
             let base = bases[i];

@@ -51,10 +51,9 @@ exports.redis = {
 };
 
 exports.weexWs = {
-    enable: true,
-    package: 'egg-weex-ws',
+  enable: true,
+  package: 'egg-weex-ws',
 };
-
 
 exports.weexHttps = {
     enable: true,
