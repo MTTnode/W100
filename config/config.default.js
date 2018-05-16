@@ -34,7 +34,10 @@ module.exports = appInfo => {
   //redis config
   config.redis = {
     client: {
-      
+      port: 6379,
+      host: '140.143.230.232',
+      password: 'xiaotao123',
+      db:0
     }
   }
 
@@ -64,9 +67,8 @@ module.exports = appInfo => {
 
   //egg-mongoose
   config.mongoose = {
-    url: '',
+    url: 'mongodb://127.0.0.1:27017/weexdb',
     options: {
-      
     }
   };
 
