@@ -9,9 +9,17 @@ class StatisticsController extends Controller {
         const { ctx, service, app } = this;
         
         let day = moment().format("YYYY-MM-DD");
+        //new user
+        let androidNewUser = await app.redis.smembers("androidNewUser_" + day);
+        let iosNewUser = await app.redis.smembers("iosNewUser_" + day);
+
         //DAU
         let androidDAU = await app.redis.smembers("androidDAU_" + day);
         let iosDAU = await app.redis.smembers("iosDAU_" + day);
+
+        //DAIP
+        let androidDAIP = await app.redis.smembers("androidDAIP_" + day);
+        let iosDAIP = await app.redis.smembers("iosDAIP_" + day);
 
         //LHT
         let LHT_100 = await app.redis.hget('LHT', "100_" + day);
@@ -27,9 +35,16 @@ class StatisticsController extends Controller {
         ctx.body = {
             code: 0,
             data: {
-                androidDAU: androidDAU ? androidDAU.length : 0,
-                iosDAU: iosDAU ? iosDAU.length : 0,
-                LHT: LHT
+              androidNewUser: androidNewUser ? androidNewUser.length : 0,
+              iosNewUser: iosNewUser ? iosNewUser.length : 0,
+              androidDAU: androidDAU ? androidDAU.length : 0,
+              iosDAU: iosDAU ? iosDAU.length : 0,
+              androidDAIP: androidDAIP ? androidDAIP.length : 0,
+              iosDAIP: iosDAIP ? iosDAIP.length : 0,
+              LHT_100: LHT_100, 
+              LHT_500: LHT_500,
+              LHT_1000: LHT_1000,
+              LHT_1001: LHT_1001
             },
             message: "OK",
         };

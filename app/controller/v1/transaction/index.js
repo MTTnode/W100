@@ -14,8 +14,12 @@ class IndexController extends Controller {
                 uid: { type: 'string' },
                 token: { type: 'string' }
             });
-
-        const markets = await ctx.service.banner.transactList();
+        const markets;
+        if(ctx.app.cache){
+          markets = ctx.app.cache;
+        }else{
+          markets = await ctx.service.banner.transactList();
+        }
         var results = [];
         var bases = Object.keys(markets);
         for (var i = 0; i < bases.length; i++) {

@@ -4,7 +4,7 @@ module.exports = {
         type: 'all',
     },
     async task(ctx) {
-        ctx.app.weexHttps.setRate(ctx);
+      ctx.app.weexHttps.setRate(ctx);
     },
     resetOtherInfo() {
         // ctx.bian.reset24hr(ctx.helper.getMarkets()["USD"], function () {
