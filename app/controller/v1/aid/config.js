@@ -13,12 +13,12 @@ class ConfigController extends Controller {
             token: { type: 'string' },
             screen: { type: 'string' },
         });
-        let banners;
-        if(ctx.app.cache){
-          banners = ctx.app.cache.banner;
-        }else{
-          banners = await ctx.service.banner.bannerList();
-        }
+        let banners = await ctx.service.banner.bannerList();
+        // if(ctx.app.cache){
+        //   banners = ctx.app.cache.banner;
+        // }else{
+        //   banners = await ctx.service.banner.bannerList();
+        // }
         ctx.body = banners;
         ctx.helper.end("banner");
     }
