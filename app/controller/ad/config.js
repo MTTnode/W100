@@ -21,16 +21,7 @@ class ConfigController extends Controller {
     const {ctx, service, app} = this;
 
     ctx.helper.pre("saveBanner", {
-      type: {
-        type: 'string'
-      },
       imgurl: {
-        type: 'string'
-      },
-      deturl: {
-        type: 'string'
-      },
-      id: {
         type: 'string'
       }
     });
@@ -87,6 +78,21 @@ class ConfigController extends Controller {
 
     ctx.helper.end("saveTransact");
   }
+
+  /**
+   * 黑名单 列表
+   * @return {Promise} [description]
+   */
+  // async blacklist() {
+  //   const {ctx, service, app} = this;
+  //   ctx.helper.pre("blacklist", {
+  //     curPage: {
+  //       type: 'number'
+  //     }
+  //   });
+  //   const { curPage } = ctx.request.body;
+  //   ctx.body = await service.adminConfig.getBlacklist(parseInt(curPage));
+  // }
 
 }
 

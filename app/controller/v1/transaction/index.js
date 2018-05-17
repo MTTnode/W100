@@ -14,9 +14,9 @@ class IndexController extends Controller {
                 uid: { type: 'string' },
                 token: { type: 'string' }
             });
-        const markets;
+        let markets;
         if(ctx.app.cache){
-          markets = ctx.app.cache;
+          markets = ctx.app.cache.transactList;
         }else{
           markets = await ctx.service.banner.transactList();
         }

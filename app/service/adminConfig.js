@@ -65,6 +65,16 @@ class AdminConfigService extends Service {
   async find(id) {
     return this.ctx.model.Banner.findById(id)
   }
+
+  // async getBlacklist(curPage) {
+  //   const {ctx, service, app} = this;
+  //   let blacklist = await ctx.model.WeexBl.find({}).limit(10).skip(curPage*10);
+  //   let blacklists = {};
+  //   blacklists.list = blacklist;
+  //   blacklists.total = blacklist.length;
+
+  //   return {code: 0, data: blacklists, massage: "OK"};
+  // }
 }
 
 module.exports = AdminConfigService;
