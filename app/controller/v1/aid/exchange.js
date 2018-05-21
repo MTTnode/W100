@@ -11,7 +11,6 @@ class ExchangeController extends Controller {
             source: { type: 'string' },
             uid: { type: 'string' },
             token: { type: 'string' },
-            screen: { type: 'string' },
         });
 
         var data = [
