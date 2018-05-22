@@ -66,7 +66,7 @@ class ConfigController extends Controller {
         ctx.helper.pre("recharge", {
         });
 
-        console.log(ctx.arg, '---------------------');
+        console.log(ctx.arg, 'callback---------------------');
 
         ctx.body = "success";
 

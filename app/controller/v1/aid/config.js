@@ -33,8 +33,8 @@ class ConfigController extends Controller {
             token: { type: 'string' },
         });
         ctx.body = {
-            code: 1000,
-            data: ["BTC,BCH,LTC,ETH,ZEC,DASH,ETC,XRP,DOGE"]
+            code: 0,
+            data: ["BTC","BCH","LTC","ETH","ZEC","DASH","ETC","XRP","DOGE"]
         };
         ctx.helper.end("banner");
     }
