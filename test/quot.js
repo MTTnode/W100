@@ -11,10 +11,10 @@ var postData=JSON.stringify({
     }
 })
 const options = {
-    // hostname: '222.73.56.202',
-    hostname: '127.0.0.1',
-    port: 52276,
-    // port: 7001,
+    hostname: '222.73.56.202',
+    // hostname: '127.0.0.1',
+    // port: 52276,
+    port: 7001,
     path: '/w100/v1/aid/exchage/quot',
     method: 'GET',
     headers: {

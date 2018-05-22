@@ -71,3 +71,8 @@ exports.mongoose = {
   enable: true,
   package: 'egg-mongoose',
 };
+
+exports.w100Payment = {
+    enable: true,
+    package: 'egg-w100-payment',
+};

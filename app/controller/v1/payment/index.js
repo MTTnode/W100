@@ -1,0 +1,77 @@
+'use strict';
+
+const Controller = require('egg').Controller;
+const _ = require("lodash");
+
+class ConfigController extends Controller {
+    /**
+     * 充值
+     */
+    async recharge() {
+        const { ctx, service, app } = this;
+        ctx.helper.pre("recharge", {
+            ver: { type: 'string' },
+            source: { type: 'string' },
+            uid: { type: 'string' },
+            token: { type: 'string' },
+            recharge_type: { type: 'string' },
+            recharge_amount: { type: 'number' },
+        });
+
+        var result = await ctx.app.w100Payment.depositReqByCoinsDo(ctx.app.redis,
+            ctx.model.CoinsDoOrder,
+            {
+                uid: ctx.arg.uid,
+                amount: ctx.arg.recharge_amount,
+            });
+
+        ctx.body = {
+            code: result.code,
+            data: result.data,
+            message: result.code != 1000 ?"error":"OK",
+        };
+    }
+
+    async getOrderStatus() {
+        const { ctx, service, app } = this;
+        ctx.helper.pre("recharge", {
+            ver: { type: 'string' },
+            source: { type: 'string' },
+            uid: { type: 'string' },
+            token: { type: 'string' },
+            order_id: { type: 'string' },
+        });
+
+        var result = await ctx.app.w100Payment.getOrderReqByCoinsDo(ctx.app.redis,
+            ctx.model.CoinsDoOrder,
+            {
+                orderId: ctx.arg.order_id,
+            }, function (err) {
+                ctx.logger.info("depositReqByDora Ok");
+            });
+
+        ctx.body = {
+            code: result == null ? 1001 : 1000,
+            data: result == null ? null : result,
+            message: result == null ? "error" : "OK",
+        };
+    }
+
+
+    /**
+    * 回调
+    */
+    async callback() {
+        const { ctx, service, app } = this;
+        ctx.helper.pre("recharge", {
+        });
+
+        console.log(ctx.arg, '---------------------');
+
+        ctx.body = "success";
+
+    }
+
+}
+
+module.exports = ConfigController;
