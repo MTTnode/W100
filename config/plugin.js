@@ -18,25 +18,25 @@ exports.validate = {
 //     path: path.join(__dirname, '../lib/plugin/egg-weex-http'),
 // };
 
-// exports.bian = {
-//     enable: true,
-//     path: path.join(__dirname, '../lib/plugin/egg-bian'),
-// };
+exports.bian = {
+    enable: true,
+    path: path.join(__dirname, '../lib/plugin/egg-bian'),
+};
 
-// exports.huobi = {
-//     enable: true,
-//     path: path.join(__dirname, '../lib/plugin/egg-huobi'),
-// };
+exports.huobi = {
+    enable: true,
+    path: path.join(__dirname, '../lib/plugin/egg-huobi'),
+};
 
-// exports.okex = {
-//     enable: true,
-//     path: path.join(__dirname, '../lib/plugin/egg-okex'),
-// };
+exports.okex = {
+    enable: true,
+    path: path.join(__dirname, '../lib/plugin/egg-okex'),
+};
 
-// exports.ZB = {
-//     enable: true,
-//     path: path.join(__dirname, '../lib/plugin/egg-ZB'),
-// };
+exports.ZB = {
+    enable: true,
+    path: path.join(__dirname, '../lib/plugin/egg-ZB'),
+};
 
 //defend
 exports.defend = {
@@ -70,4 +70,9 @@ exports.logrotator = {
 exports.mongoose = {
   enable: true,
   package: 'egg-mongoose',
+};
+
+exports.w100Payment = {
+    enable: true,
+    package: 'egg-w100-payment',
 };

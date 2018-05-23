@@ -22,6 +22,22 @@ class ConfigController extends Controller {
         ctx.body = banners;
         ctx.helper.end("banner");
     }
+
+
+    async getCurrency() {
+        const { ctx, service, app } = this;
+        ctx.helper.pre("getCurrency", {
+            ver: { type: 'string' },
+            source: { type: 'string' },
+            uid: { type: 'string' },
+            token: { type: 'string' },
+        });
+        ctx.body = {
+            code: 0,
+            data: ["BTC","BCH","LTC","ETH","ZEC","DASH","ETC","XRP","DOGE"]
+        };
+        ctx.helper.end("banner");
+    }
 }
 
 module.exports = ConfigController;
