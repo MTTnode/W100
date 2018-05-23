@@ -42,6 +42,21 @@ class ConfigController extends Controller {
             order_id: { type: 'string' },
         });
 
+        return {
+            "code": 1000,
+            "data": {
+                "order_ptime": "2018-04-08 14:17:43",
+                "coin_rate": "8343.39",
+                "coin_address": "ms8RToQRrDw6rGD8pxKSGCq9LjmKc3Q2XC",
+                "coin_amount": "0.0013",
+                "coin_wait": 0.0013,
+                "coin_paid": "0",
+                "coin_cfmed": "0",
+                "valid_second": 50,
+                "order_status": "1"
+            },
+            "message": "OK"
+        }
         var result = await ctx.app.w100Payment.getOrderReqByCoinsDo(ctx.app.redis,
             ctx.model.CoinsDoOrder,
             {
