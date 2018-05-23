@@ -6,7 +6,7 @@ module.exports = {
         this.ctx.arg = _.merge(this.ctx.query, this.ctx.request.body);
         this.ctx.arg = _.merge(this.ctx.arg, this.ctx.headers);
         this.ctx.arg._time = new Date().getTime();
-        this.ctx.arg.ip = this.ctx.ip;
+        this.ctx.arg.ip = this.ctx.headers['x-real-ip'];
         this.app.logger.info(m, this.ctx.ip, JSON.stringify(this.ctx.arg), "begin");
         //校验参数
         this.ctx.validate(argRule, this.ctx.arg);
@@ -17,7 +17,7 @@ module.exports = {
         let ptime = new Date().getTime() - this.ctx.arg._time;
         //打印det日志
         this.app.logger.info(m,
-            this.ctx.ip,
+            this.ctx.headers['x-real-ip'],
             JSON.stringify(this.ctx.arg),
             JSON.stringify(this.ctx.body), "end",
             ptime
