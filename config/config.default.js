@@ -26,8 +26,8 @@ module.exports = appInfo => {
 
   config.weexWs = {
     client: {
-      // url: "wss://wsapp.weex.com:8443"
-      url: "wss://ws.bithe.com"
+      url: "wss://wsapp.weex.com:8443"
+      // url: "wss://ws.bithe.com"
     }
   };
 
