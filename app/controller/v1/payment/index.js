@@ -42,7 +42,7 @@ class ConfigController extends Controller {
             order_id: { type: 'string' },
         });
 
-        return {
+        var result = {
             "code": 1000,
             "data": {
                 "order_ptime": "2018-04-08 14:17:43",
@@ -56,7 +56,10 @@ class ConfigController extends Controller {
                 "order_status": "1"
             },
             "message": "OK"
-        }
+        };
+        ctx.body = result;
+        return;
+         
         var result = await ctx.app.w100Payment.getOrderReqByCoinsDo(ctx.app.redis,
             ctx.model.CoinsDoOrder,
             {
