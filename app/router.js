@@ -24,6 +24,14 @@ module.exports = app => {
   router.post('/ad/delBanner', controller.ad.config.delBanner);  //banner删除
   router.get('/ad/transact', controller.ad.config.transact);  //交易对配置
   router.post('/ad/saveTransact', controller.ad.config.saveTransact);  //交易对保存
+  router.get('/ad/blacklist', controller.ad.config.blacklist); //黑名单列表
+  router.post('/ad/addBlack', controller.ad.config.addBlack); //黑名单添加
+  router.post('/ad/delBlack', controller.ad.config.delBlack); //黑名单删除
+  router.get('/ad/whitelist', controller.ad.config.whitelist); //白名单列表
+  router.post('/ad/addWhite', controller.ad.config.addWhite); //白名单添加
+  router.post('/ad/delWhite', controller.ad.config.delWhite); //白名单删除
+  router.get('/ad/getDAU', controller.ad.statistics.getDAU); //后台管理统计
+
   router.get('*', async (ctx, next) => {
     ctx.service.httpDefend.addHttp(ctx, 404);
     ctx.body = { status : 404, message: 'Not Found' };
