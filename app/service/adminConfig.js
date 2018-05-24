@@ -54,11 +54,12 @@ class AdminConfigService extends Service {
   async saveTransact(params) {
     const {ctx, service, app} = this;
     const transact = await ctx.model.Transact.find({ "base" : params.base });
-    if(!transact){
-      ctx.throw(404, 'transact not found')
+    let res = '';
+    if(transact.length > 0){
+      res = await ctx.model.Transact.findOneAndUpdate({ "base" : params.base }, {$set: {"markets": params.markets}});
+    }else{
+      res = await ctx.model.Transact.create(params);
     }
-    let res = await ctx.model.Transact.findOneAndUpdate({ "base" : params.base }, {$set: {"markets": params.markets}});
-
     return {code: 0, data: res, massage: "OK"};
   }
 
