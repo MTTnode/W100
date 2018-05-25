@@ -19,15 +19,15 @@ module.exports = appInfo => {
 
   config.weexHttps = {
     client: {
-      // url: "https://wwwapp.weex.com:8443/"
-      url: "https://www.bithe.com/"
+      url: "https://wwwapp.weex.com:8443/"
+      // url: "https://www.bithe.com/"
     }
   };
 
   config.weexWs = {
     client: {
-      // url: "wss://wsapp.weex.com:8443"
-      url: "wss://ws.bithe.com"
+      url: "wss://wsapp.weex.com:8443"
+      // url: "wss://ws.bithe.com"
     }
   };
 
@@ -38,14 +38,6 @@ module.exports = appInfo => {
       host: '140.143.230.232',
       password: 'xiaotao123',
       db:0
-    }
-  }
-
-  //weexLogger config
-  config.customLogger = {
-    weexLogger: {
-      file: path.join(appInfo.root, 'logs/weexLogger.log'),
-      outputJSON: true,
     }
   }
 
