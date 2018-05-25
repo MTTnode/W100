@@ -7,7 +7,7 @@ module.exports = {
         res.transactList = await ctx.service.banner.transactList();
         res.banner = await ctx.service.banner.bannerList();
         ctx.app.cache = res;
-        return;
+        
         ctx.bian.reset24hr(ctx.helper.getMarkets()["USD"], function () {
             console.log(ctx.bian.get24hr());
             console.log("init bian end");
