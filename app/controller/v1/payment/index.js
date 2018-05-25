@@ -92,7 +92,6 @@ class ConfigController extends Controller {
             source: { type: 'string' },
             uid: { type: 'string' },
             token: { type: 'string' },
-            order_id: { type: 'string' },
         });
 
         var results = await ctx.app.w100Payment.getOrderListByCoinsDo(ctx.app.redis,
