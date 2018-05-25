@@ -28,7 +28,7 @@ class ConfigController extends Controller {
         ctx.body = {
             code: result.code,
             data: result.data,
-            message: result.code != 1000 ?"error":"OK",
+            message: result.code != 1000 ? "error" : "OK",
         };
     }
 
@@ -42,24 +42,6 @@ class ConfigController extends Controller {
             order_id: { type: 'string' },
         });
 
-        var result = {
-            "code": 1000,
-            "data": {
-                "order_ptime": "2018-04-08 14:17:43",
-                "coin_rate": "8343.39",
-                "coin_address": "ms8RToQRrDw6rGD8pxKSGCq9LjmKc3Q2XC",
-                "coin_amount": "0.0013",
-                "coin_wait": 0.0013,
-                "coin_paid": "0",
-                "coin_cfmed": "0",
-                "valid_second": 50,
-                "order_status": "1"
-            },
-            "message": "OK"
-        };
-        ctx.body = result;
-        return;
-         
         var result = await ctx.app.w100Payment.getOrderReqByCoinsDo(ctx.app.redis,
             ctx.model.CoinsDoOrder,
             {
@@ -73,8 +55,61 @@ class ConfigController extends Controller {
             data: result == null ? null : result,
             message: result == null ? "error" : "OK",
         };
+        console.log(ctx.body);
     }
 
+    async setOrderStatus() {
+        const { ctx, service, app } = this;
+        ctx.helper.pre("recharge", {
+            ver: { type: 'string' },
+            source: { type: 'string' },
+            uid: { type: 'string' },
+            token: { type: 'string' },
+            order_id: { type: 'string' },
+        });
+
+        var result = await ctx.app.w100Payment.setOrderStatusByCoinsDo(ctx.app.redis,
+            ctx.model.CoinsDoOrder,
+            {
+                uid:ctx.arg.uid,
+                orderId: ctx.arg.order_id,
+            }, function (err) {
+                ctx.logger.info("setOrderStatusByCoinsDo Ok");
+            });
+
+        ctx.body = {
+            code: result.code == null ? 1001 : 1000,
+            data: result.data == null ? null : result.data,
+            message: result == null ? "error" : "OK",
+        };
+        console.log(ctx.body);
+    }
+
+    async getOrderList() {
+        const { ctx, service, app } = this;
+        ctx.helper.pre("recharge", {
+            ver: { type: 'string' },
+            source: { type: 'string' },
+            uid: { type: 'string' },
+            token: { type: 'string' },
+            order_id: { type: 'string' },
+        });
+
+        var results = await ctx.app.w100Payment.getOrderListByCoinsDo(ctx.app.redis,
+            ctx.model.CoinsDoOrder,
+            {
+                uid:ctx.arg.uid,
+            }, function (err) {
+                ctx.logger.info("setOrderStatusByCoinsDo Ok");
+            });
+
+        ctx.body = {
+            code:  1000,
+            data: results,
+            message: results == null ? "error" : "OK",
+        };
+        console.log(ctx.body);
+    }
 
     /**
     * 回调

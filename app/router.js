@@ -16,6 +16,8 @@ module.exports = app => {
   router.post('/w100/v1/payment/recharge', controller.v1.payment.index.recharge);//充值
   router.post('/w100/v1/payment/callback', controller.v1.payment.index.callback);//回调
   router.get('/w100/v1/payment/getOrderStatus', controller.v1.payment.index.getOrderStatus);//获取订单状态
+  router.post('/w100/v1/payment/setOrderStatus', controller.v1.payment.index.setOrderStatus);//获取订单状态
+  router.get('/w100/v1/payment/getOrderList', controller.v1.payment.index.getOrderList);//获取订单状态
 
   //////后台接口
   router.get('/ad/stat', controller.ad.statistics.index); //后台管理统计
