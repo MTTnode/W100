@@ -11,7 +11,7 @@ module.exports = {
         //校验参数
         this.ctx.validate(argRule, this.ctx.arg);
 
-        this.ctx.arg.source = this.ctx.arg.source.toLowerCase(); // 统一转为小写
+        this.ctx.arg.source = this.ctx.arg.source == null ? "def" : this.ctx.arg.source.toLowerCase(); // 统一转为小写
     },
     end(m) {
         let ptime = new Date().getTime() - this.ctx.arg._time;
@@ -48,7 +48,7 @@ module.exports = {
         }
     },
     getMarkets() {
-      // let markets = this.ctx.service.banner.transactList();
+        // let markets = this.ctx.service.banner.transactList();
         return {
             "USD": [
                 'BTCUSD',
