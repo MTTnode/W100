@@ -126,7 +126,7 @@ class ConfigController extends Controller {
 
         var results = await ctx.app.w100Payment.callbackByCoinsDo(ctx.app.redis,
             ctx.model.CoinsDoOrder,
-            arg);
+            ctx.arg);
         ctx.body = results;
 
     }
