@@ -25,8 +25,8 @@ class ConfigController extends Controller {
                 amount: ctx.arg.recharge_amount,
             });
         let res = Object.assign({}, result.data);
-        if(result.code == 1000){
-          res.amount = ctx.arg.recharge_amount;
+        if (result.code == 1000) {
+            res.amount = ctx.arg.recharge_amount;
         }
 
         ctx.body = {
@@ -75,7 +75,7 @@ class ConfigController extends Controller {
         var result = await ctx.app.w100Payment.setOrderStatusByCoinsDo(ctx.app.redis,
             ctx.model.CoinsDoOrder,
             {
-                uid:ctx.arg.uid,
+                uid: ctx.arg.uid,
                 orderId: ctx.arg.order_id,
             }, function (err) {
                 ctx.logger.info("setOrderStatusByCoinsDo Ok");
@@ -101,13 +101,13 @@ class ConfigController extends Controller {
         var results = await ctx.app.w100Payment.getOrderListByCoinsDo(ctx.app.redis,
             ctx.model.CoinsDoOrder,
             {
-                uid:ctx.arg.uid,
+                uid: ctx.arg.uid,
             }, function (err) {
                 ctx.logger.info("setOrderStatusByCoinsDo Ok");
             });
 
         ctx.body = {
-            code:  1000,
+            code: 1000,
             data: results,
             message: results == null ? "error" : "OK",
         };
@@ -119,12 +119,15 @@ class ConfigController extends Controller {
     */
     async callback() {
         const { ctx, service, app } = this;
-        ctx.helper.pre("recharge", {
+        ctx.helper.pre("callback", {
         });
 
         console.log(ctx.arg, 'callback---------------------');
 
-        ctx.body = "success";
+        var results = await ctx.app.w100Payment.callbackByCoinsDo(ctx.app.redis,
+            ctx.model.CoinsDoOrder,
+            arg);
+        ctx.body = results;
 
     }
 
