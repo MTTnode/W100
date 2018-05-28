@@ -5,6 +5,7 @@ module.exports = app => {
   const WeexWlSchema = new Schema({
     ip: { type: String },
     uid: { type: String },
+    url: { type: String },
     content: { type: String }   //原因
   });
 

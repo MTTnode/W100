@@ -24,10 +24,14 @@ class ConfigController extends Controller {
                 uid: ctx.arg.uid,
                 amount: ctx.arg.recharge_amount,
             });
+        let res = Object.assign({}, result.data);
+        if(result.code == 1000){
+          res.amount = ctx.arg.recharge_amount;
+        }
 
         ctx.body = {
             code: result.code,
-            data: result.data,
+            data: res,
             message: result.code != 1000 ? "error" : "OK",
         };
     }

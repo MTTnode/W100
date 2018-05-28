@@ -138,14 +138,16 @@ class AdminConfigService extends Service {
         'ip': params.ip
       });
     }
-    if(params.uid != -1){
+    if(params.uid && params.uid != -1){
       arr.push({
         'uid': params.uid
       });
     }
-    const blacklistRes = await ctx.model.WeexWl.find({'$or': arr});
-    if(blacklistRes.length > 0){
-      return {code: -1, data: '此账户或IP已被列入白名单！', massage: ''};
+    if(arr.length > 1){
+      const blacklistRes = await ctx.model.WeexWl.find({'$or': arr});
+      if(blacklistRes.length > 0){
+        return {code: -1, data: '此账户或IP已被列入白名单！', massage: ''};
+      }
     }
     const res = await ctx.model.WeexWl.create(params);
 

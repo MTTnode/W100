@@ -15,6 +15,13 @@ module.exports = () => {
         'uid': ctx.headers.uid
       });
     }
+    let urlStr  = ctx.url;
+    if(urlStr.indexOf('?') > -1){
+      urlStr = urlStr.substring(0, urlStr.indexOf('?'));
+    }
+    arr.push({
+      'url': urlStr
+    });
     const listRes = await ctx.model.WeexWl.find({'$or': arr});
     if(listRes.length < 1){
       const msg = await ctx.defend.httpHandle(ctx);

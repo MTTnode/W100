@@ -48,6 +48,7 @@ module.exports = {
         }
     },
     getMarkets() {
+      // let markets = this.ctx.service.banner.transactList();
         return {
             "USD": [
                 'BTCUSD',
@@ -57,7 +58,8 @@ module.exports = {
                 'ZECUSD',
                 'DASHUSD',
                 'ETCUSD',
-                'XRPUSD'
+                'XRPUSD',
+                'DOGEUSD'
             ],
             "BTC": [
                 'BCHBTC',

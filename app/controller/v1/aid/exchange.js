@@ -15,13 +15,13 @@ class ExchangeController extends Controller {
 
         var data = [
             {
-                exchage: "bian",
+                exchage: "币安",
                 data: ctx.bian.get24hr()
             }, {
-                exchage: "huobi",
+                exchage: "火币",
                 data: ctx.huobi.get24hr()
             }, {
-                exchage: "okex",
+                exchage: "OKEx",
                 data: ctx.okex.get24hr()
             }, {
                 exchage: "ZB",
