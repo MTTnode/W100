@@ -6,7 +6,7 @@ module.exports = app => {
         create_time: { type: Number },  //订单创建时间
         uid: { type: String },
         price: { type: String },//商户订单金额（人民币金额）
-       
+
         coin_sign: { type: String },
         cur_sign: { type: String },
         weex_order_status: { type: String },
@@ -21,6 +21,8 @@ module.exports = app => {
         coin_paid: { type: Number },
         coin_cfmed: { type: Number },
         valid_second: { type: Number },
+        ////
+        addUsdFlag: { type: Boolean },
     });
 
 

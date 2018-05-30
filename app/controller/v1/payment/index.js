@@ -34,6 +34,7 @@ class ConfigController extends Controller {
             data: res,
             message: result.code != 1000 ? "error" : "OK",
         };
+        ctx.helper.end("recharge");
     }
 
     async getOrderStatus() {
