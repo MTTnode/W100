@@ -1,3 +1,4 @@
+var moment = require('moment');
 module.exports = () => {
     return async function errorHandler(ctx, next) {
         try {
@@ -25,6 +26,15 @@ module.exports = () => {
                 JSON.stringify(ctx.arg),
                 JSON.stringify(ctx.body), "end",
                 new Date().getTime() - ctx.arg._time);
+            await ctx.model.MessageLogs.create({
+                create_time: moment(new Date().getTime()).format('YYYY-MM-DD HH:mm:ss'),
+                message_type: "exception",
+                uid: ctx.arg.uid,
+                key: "",
+                info: "参数:" + JSON.stringify(ctx.arg) +
+                    ", 异常原因" + JSON.stringify(ctx.body),
+                send_flag: false,
+            });
         }
     };
 };

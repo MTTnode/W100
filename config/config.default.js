@@ -37,7 +37,7 @@ module.exports = appInfo => {
       port: 6379,
       host: '140.143.230.232',
       password: 'xiaotao123',
-      db:0
+      db: 0
     }
   }
 
@@ -64,6 +64,19 @@ module.exports = appInfo => {
     }
   };
 
+  config.tg = {
+    client: {
+      key: "468478553:AAECQWsTNj5wkzTHNcS1IIw48d_GqoFwox8", // 说明文档问CC
+      rule: {
+        "exception": [
+          "cc"
+        ],
+        "usdt": [
+          "cc"
+        ]
+      }
+    }
+  };
   return config;
 };
 

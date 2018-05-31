@@ -8,16 +8,6 @@ exports.validate = {
     package: 'egg-validate',
 };
 
-// console.log(path.join(__dirname, '../lib/plugin/egg-ws'));
-// exports.weex_ws = {
-//     enable: true,
-//     path: path.join(__dirname, '../lib/plugin/egg-weex-ws'),
-// };
-// exports.weex_http = {
-//     enable: true,
-//     path: path.join(__dirname, '../lib/plugin/egg-weex-http'),
-// };
-
 exports.bian = {
     enable: true,
     path: path.join(__dirname, '../lib/plugin/egg-bian'),
@@ -40,8 +30,14 @@ exports.ZB = {
 
 //defend
 exports.defend = {
-  enable: true,
-  path: path.join(__dirname, '../lib/plugin/egg-defend'),
+    enable: true,
+    path: path.join(__dirname, '../lib/plugin/egg-defend'),
+};
+
+//tg
+exports.tg = {
+    enable: true,
+    path: path.join(__dirname, '../lib/plugin/egg-tg'),
 };
 
 //redis config
@@ -51,8 +47,8 @@ exports.redis = {
 };
 
 exports.weexWs = {
-  enable: true,
-  package: 'egg-weex-ws',
+    enable: true,
+    package: 'egg-weex-ws',
 };
 
 exports.weexHttps = {
@@ -62,14 +58,14 @@ exports.weexHttps = {
 
 //egg-logrotator
 exports.logrotator = {
-  enable: true,
-  package: 'egg-logrotator'
+    enable: true,
+    package: 'egg-logrotator'
 };
 
 //egg-mongoose
 exports.mongoose = {
-  enable: true,
-  package: 'egg-mongoose',
+    enable: true,
+    package: 'egg-mongoose',
 };
 
 exports.w100Payment = {

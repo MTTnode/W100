@@ -20,6 +20,7 @@ class ConfigController extends Controller {
 
         var result = await ctx.app.w100Payment.depositReqByCoinsDo(ctx.app.redis,
             ctx.model.CoinsDoOrder,
+            ctx.model.MessageLogs,
             {
                 uid: ctx.arg.uid,
                 amount: ctx.arg.recharge_amount,
@@ -39,7 +40,7 @@ class ConfigController extends Controller {
 
     async getOrderStatus() {
         const { ctx, service, app } = this;
-        ctx.helper.pre("recharge", {
+        ctx.helper.pre("getOrderStatus", {
             ver: { type: 'string' },
             source: { type: 'string' },
             uid: { type: 'string' },
@@ -49,8 +50,10 @@ class ConfigController extends Controller {
 
         var result = await ctx.app.w100Payment.getOrderReqByCoinsDo(ctx.app.redis,
             ctx.model.CoinsDoOrder,
+            ctx.model.MessageLogs,
             {
                 orderId: ctx.arg.order_id,
+                uid: ctx.arg.uid,
             }, function (err) {
                 ctx.logger.info("depositReqByDora Ok");
             });
@@ -60,7 +63,7 @@ class ConfigController extends Controller {
             data: result == null ? null : result,
             message: result == null ? "error" : "OK",
         };
-        console.log(ctx.body);
+        ctx.helper.end("getOrderStatus");
     }
 
     async setOrderStatus() {
@@ -75,6 +78,7 @@ class ConfigController extends Controller {
 
         var result = await ctx.app.w100Payment.setOrderStatusByCoinsDo(ctx.app.redis,
             ctx.model.CoinsDoOrder,
+            ctx.model.MessageLogs,
             {
                 uid: ctx.arg.uid,
                 orderId: ctx.arg.order_id,
@@ -123,13 +127,13 @@ class ConfigController extends Controller {
         ctx.helper.pre("callback", {
         });
 
-        console.log(ctx.arg, 'callback---------------------');
-
         var results = await ctx.app.w100Payment.callbackByCoinsDo(ctx.app.redis,
             ctx.model.CoinsDoOrder,
+            ctx.model.MessageLogs,
             ctx.arg);
         ctx.body = results;
-
+        ctx.helper.end("callback", {
+        });
     }
 
 }
