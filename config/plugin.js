@@ -8,16 +8,6 @@ exports.validate = {
     package: 'egg-validate',
 };
 
-// console.log(path.join(__dirname, '../lib/plugin/egg-ws'));
-// exports.weex_ws = {
-//     enable: true,
-//     path: path.join(__dirname, '../lib/plugin/egg-weex-ws'),
-// };
-// exports.weex_http = {
-//     enable: true,
-//     path: path.join(__dirname, '../lib/plugin/egg-weex-http'),
-// };
-
 exports.bian = {
     enable: true,
     path: path.join(__dirname, '../lib/plugin/egg-bian'),
@@ -75,4 +65,10 @@ exports.mongoose = {
 exports.w100Payment = {
     enable: true,
     package: 'egg-w100-payment',
+};
+
+//tg
+exports.tg = {
+    enable: true,
+    path: path.join(__dirname, '../lib/plugin/egg-tg'),
 };

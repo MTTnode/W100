@@ -63,6 +63,20 @@ module.exports = appInfo => {
     options: {
     }
   };
+  //tg配置
+  config.tg = {
+    client: {
+      key: "468478553:AAECQWsTNj5wkzTHNcS1IIw48d_GqoFwox8", // 说明文档问CC
+      rule: {
+        "exception": [
+          "cc"
+        ],
+        "usdt": [
+          "cc"
+        ]
+      }
+    }
+  };
 
   return config;
 };

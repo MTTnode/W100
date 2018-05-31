@@ -5,5 +5,6 @@ module.exports = {
     },
     async task(ctx) {
       ctx.app.weexHttps.setRate(ctx);
+      await ctx.app.tg.loopDBMessage(ctx.model.MessageLogs);
     }
 };

@@ -18,14 +18,12 @@ class IndexController extends Controller {
         const k1 = app.weexWs.get1Kline();
 
         const marketInfos = app.weexWs.getTodaySubscribe()["USD"];
-        console.log(marketInfos,"===========");
         var t = [];
         var markets = Object.keys(marketInfos);
         for (var i = 0; i < markets.length; i++) {
             let market = marketInfos[markets[i]];
             t.push(market);
         }
-        console.log(t);
         let d = _.orderBy(t, ['priceChangePercent'], ['desc']); 
 
         let res = {
