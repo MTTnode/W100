@@ -36,7 +36,7 @@ class ConfigController extends Controller {
             code: 0,
             data: ["BTC","BCH","LTC","ETH","ZEC","DASH","ETC","XRP","DOGE"]
         };
-        ctx.helper.end("banner");
+        ctx.helper.end("getCurrency");
     }
 }
 

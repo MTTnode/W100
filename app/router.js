@@ -18,6 +18,11 @@ module.exports = app => {
   router.get('/w100/v1/payment/getOrderStatus', controller.v1.payment.index.getOrderStatus);//获取订单状态
   router.post('/w100/v1/payment/setOrderStatus', controller.v1.payment.index.setOrderStatus);//获取订单状态
   router.get('/w100/v1/payment/getOrderList', controller.v1.payment.index.getOrderList);//获取订单状态
+  router.get('/w100/v1/client/update/check',  controller.v1.client.update.check.checkVer);//app版本检查
+  router.post('/w100/v1/marketwarn/addMarketwarn', controller.v1.marketwarn.index.addMarketwarn);//新增预警
+  router.post('/w100/v1/marketwarn/delMarketwarn', controller.v1.marketwarn.index.delMarketwarn);//删除预警
+  router.get('/w100/v1/marketwarn/getMarketwarn', controller.v1.marketwarn.index.getMarketwarn);//查看预警
+  router.get('/w100/v1/marketwarn/getMarketwarnList', controller.v1.marketwarn.index.getMarketwarnList);//查看预警列表
 
   //////后台接口
   router.get('/ad/stat', controller.ad.statistics.index); //后台管理统计
@@ -33,6 +38,8 @@ module.exports = app => {
   router.post('/ad/addWhite', controller.ad.config.addWhite); //白名单添加
   router.post('/ad/delWhite', controller.ad.config.delWhite); //白名单删除
   router.get('/ad/getDAU', controller.ad.statistics.getDAU); //后台管理统计
+  router.get('/ad/update/checkList',  controller.ad.update.checkList);//app版本列表
+  router.post('/ad/update/addVersion',  controller.ad.update.addVaersion);//添加app版本
 
   router.get('*', async (ctx, next) => {
     ctx.service.httpDefend.addHttp(ctx, 404);
