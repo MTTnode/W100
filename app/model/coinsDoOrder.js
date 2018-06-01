@@ -9,7 +9,6 @@ module.exports = app => {
        
         coin_sign: { type: String },
         cur_sign: { type: String },
-        weex_order_status: { type: String },
         /////////////////
         order_number: { type: String },
         order_ptime: { type: String },

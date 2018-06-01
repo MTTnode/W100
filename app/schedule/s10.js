@@ -59,6 +59,6 @@ module.exports = {
       }
       ctx.app.weexHttps.setRate(ctx);
       await ctx.app.tg.loopDBMessage(ctx.model.MessageLogs);
-    },
+    }
 
 };

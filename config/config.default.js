@@ -37,7 +37,7 @@ module.exports = appInfo => {
       port: 6379,
       host: '140.143.230.232',
       password: 'xiaotao123',
-      db:0
+      db: 0
     }
   }
 
@@ -61,6 +61,39 @@ module.exports = appInfo => {
   config.mongoose = {
     url: 'mongodb://127.0.0.1:27017/weexdb',
     options: {
+    }
+  };
+  //tg配置
+  config.tg = {
+    client: {
+      key: "468478553:AAECQWsTNj5wkzTHNcS1IIw48d_GqoFwox8", // 说明文档问CC
+      rule: {
+        "exception": [
+          "cc"
+        ],
+        "usdt": [
+          "cc"
+        ]
+      }
+    }
+  };
+  //支付配置
+  config.w100Payment = {
+    client: {
+      weex: {
+        access_id: "1A491D533A704AF48F3DB8A57938EAE8",
+        secret_key: "A7376A5E1D7F4149B23B53C946CB68D63CD47BA6699D596B",
+        hostname: "wwwapp.weex.com",
+        port: 8000,
+        path: "/internal/exchange/account/pay/balance"
+      }, coinsDo: {
+        "aging": 1000 * 60 * 60 * 24,
+        "callbackurl": "http://222.73.56.202:3000/w100/v1/payment/callback",
+        "url": "http://uat.coinsdo.com/v1/morder/paycoin",
+        "queryurl": "http://uat.coinsdo.com/v1/morder/query",
+        "merch_id": "10000",
+        "merch_key": "ZDcyZTBlMDBiYjYyMTlmOTA0ZDhlODUxOTgxOTk0ZDY5YjBkYWMzZQ=="
+      }
     }
   };
 

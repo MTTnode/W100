@@ -20,13 +20,14 @@ class ConfigController extends Controller {
 
         var result = await ctx.app.w100Payment.depositReqByCoinsDo(ctx.app.redis,
             ctx.model.CoinsDoOrder,
+            ctx.model.MessageLogs,
             {
                 uid: ctx.arg.uid,
                 amount: ctx.arg.recharge_amount,
             });
         let res = Object.assign({}, result.data);
-        if(result.code == 1000){
-          res.amount = ctx.arg.recharge_amount;
+        if (result.code == 1000) {
+            res.amount = ctx.arg.recharge_amount;
         }
 
         ctx.body = {
@@ -34,11 +35,12 @@ class ConfigController extends Controller {
             data: res,
             message: result.code != 1000 ? "error" : "OK",
         };
+        ctx.helper.end("recharge");
     }
 
     async getOrderStatus() {
         const { ctx, service, app } = this;
-        ctx.helper.pre("recharge", {
+        ctx.helper.pre("getOrderStatus", {
             ver: { type: 'string' },
             source: { type: 'string' },
             uid: { type: 'string' },
@@ -48,8 +50,10 @@ class ConfigController extends Controller {
 
         var result = await ctx.app.w100Payment.getOrderReqByCoinsDo(ctx.app.redis,
             ctx.model.CoinsDoOrder,
+            ctx.model.MessageLogs,
             {
                 orderId: ctx.arg.order_id,
+                uid: ctx.arg.uid,
             }, function (err) {
                 ctx.logger.info("depositReqByDora Ok");
             });
@@ -59,12 +63,12 @@ class ConfigController extends Controller {
             data: result == null ? null : result,
             message: result == null ? "error" : "OK",
         };
-        console.log(ctx.body);
+        ctx.helper.end("getOrderStatus");
     }
 
     async setOrderStatus() {
         const { ctx, service, app } = this;
-        ctx.helper.pre("recharge", {
+        ctx.helper.pre("setOrderStatus", {
             ver: { type: 'string' },
             source: { type: 'string' },
             uid: { type: 'string' },
@@ -74,8 +78,9 @@ class ConfigController extends Controller {
 
         var result = await ctx.app.w100Payment.setOrderStatusByCoinsDo(ctx.app.redis,
             ctx.model.CoinsDoOrder,
+            ctx.model.MessageLogs,
             {
-                uid:ctx.arg.uid,
+                uid: ctx.arg.uid,
                 orderId: ctx.arg.order_id,
             }, function (err) {
                 ctx.logger.info("setOrderStatusByCoinsDo Ok");
@@ -86,12 +91,12 @@ class ConfigController extends Controller {
             data: result.data == null ? null : result.data,
             message: result == null ? "error" : "OK",
         };
-        console.log(ctx.body);
+        ctx.helper.end("setOrderStatus");
     }
 
     async getOrderList() {
         const { ctx, service, app } = this;
-        ctx.helper.pre("recharge", {
+        ctx.helper.pre("getOrderList", {
             ver: { type: 'string' },
             source: { type: 'string' },
             uid: { type: 'string' },
@@ -101,17 +106,17 @@ class ConfigController extends Controller {
         var results = await ctx.app.w100Payment.getOrderListByCoinsDo(ctx.app.redis,
             ctx.model.CoinsDoOrder,
             {
-                uid:ctx.arg.uid,
+                uid: ctx.arg.uid,
             }, function (err) {
                 ctx.logger.info("setOrderStatusByCoinsDo Ok");
             });
 
         ctx.body = {
-            code:  1000,
+            code: 1000,
             data: results,
             message: results == null ? "error" : "OK",
         };
-        console.log(ctx.body);
+        ctx.helper.end("getOrderList");
     }
 
     /**
@@ -119,13 +124,17 @@ class ConfigController extends Controller {
     */
     async callback() {
         const { ctx, service, app } = this;
-        ctx.helper.pre("recharge", {
+        ctx.helper.pre("callback", {
         });
-
-        console.log(ctx.arg, 'callback---------------------');
-
-        ctx.body = "success";
-
+        console.log("=======================callback==================");
+        console.log(ctx.arg);
+        var results = await ctx.app.w100Payment.callbackByCoinsDo(ctx.app.redis,
+            ctx.model.CoinsDoOrder,
+            ctx.model.MessageLogs,
+            ctx.arg);
+        ctx.body = results;
+        ctx.helper.end("callback", {
+        });
     }
 
 }
