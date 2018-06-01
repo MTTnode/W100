@@ -17,9 +17,9 @@ module.exports = app => {
         coin_address: { type: String },
         coin_amount: { type: String },
         coin_wait: { type: String },
-        coin_paid: { type: Number },
-        coin_cfmed: { type: Number },
-        valid_second: { type: Number },
+        coin_paid: { type: String },
+        coin_cfmed: { type: String },
+        valid_second: { type: String },
     });
 
 
