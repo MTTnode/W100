@@ -10,13 +10,6 @@ module.exports = {
   async task(ctx) {
     ctx.app.weexHttps.setRate(ctx);
 
-    if (await ctx.app.redis.setnx("LOOP_MESSAGE_DB", "1") == 1) {
-      ctx.logger.info("loopDBMessage");
-      console.log();
-      await ctx.app.tg.loopDBMessage(ctx.model.MessageLogs);
-      await ctx.app.redis.del("LOOP_MESSAGE_DB");
-    }
-
     let day = moment().format("YYYY-MM-DD");
     let res = await ctx.service.marketwarn.getMarketwarnByday();
     for (let v of res) {
@@ -66,7 +59,6 @@ module.exports = {
         });
       }
     }
-    ctx.app.weexHttps.setRate(ctx);
   }
 
 };
