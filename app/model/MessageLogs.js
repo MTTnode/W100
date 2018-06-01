@@ -5,6 +5,7 @@ module.exports = app => {
     const MessageLogsSchema = new Schema({
         create_time: { type: String },
         message_type: { type: String },
+        ip: { type: String },
         uid: { type: String },
         key: { type: String }, //关键字 如果是充值 可能是充值id
 
