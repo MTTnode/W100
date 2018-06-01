@@ -68,7 +68,7 @@ class ConfigController extends Controller {
 
     async setOrderStatus() {
         const { ctx, service, app } = this;
-        ctx.helper.pre("recharge", {
+        ctx.helper.pre("setOrderStatus", {
             ver: { type: 'string' },
             source: { type: 'string' },
             uid: { type: 'string' },
@@ -91,12 +91,12 @@ class ConfigController extends Controller {
             data: result.data == null ? null : result.data,
             message: result == null ? "error" : "OK",
         };
-        console.log(ctx.body);
+        ctx.helper.end("setOrderStatus");
     }
 
     async getOrderList() {
         const { ctx, service, app } = this;
-        ctx.helper.pre("recharge", {
+        ctx.helper.pre("getOrderList", {
             ver: { type: 'string' },
             source: { type: 'string' },
             uid: { type: 'string' },
@@ -116,7 +116,7 @@ class ConfigController extends Controller {
             data: results,
             message: results == null ? "error" : "OK",
         };
-        console.log(ctx.body);
+        ctx.helper.end("getOrderList");
     }
 
     /**
@@ -126,7 +126,8 @@ class ConfigController extends Controller {
         const { ctx, service, app } = this;
         ctx.helper.pre("callback", {
         });
-
+        console.log("=======================callback==================");
+        console.log(ctx.arg);
         var results = await ctx.app.w100Payment.callbackByCoinsDo(ctx.app.redis,
             ctx.model.CoinsDoOrder,
             ctx.model.MessageLogs,
