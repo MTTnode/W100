@@ -8,7 +8,7 @@ class StatService extends Service {
      * 客户端上报的统计
      * @param {*} arg 
      */
-    buildStatData(arg) {
+    async buildStatData(arg) {
         const { ctx, service, app } = this;
         let day = moment().format("YYYY-MM-DD");
         switch (arg.event_type) {
@@ -27,6 +27,24 @@ class StatService extends Service {
                 else if (arg.source == "ios") {
                     app.redis.sadd('iosActiveUser_' + day, arg.uid);
                 }
+                break;
+            case "recharge": //充值
+                let params = {};
+                params.uid = arg.uid;
+                params.event_type = arg.event_type;
+                params.coin_type = arg.event_info.coin_type;
+                params.coin_amount = arg.event_info.coin_amount;
+                params.source = arg.source;
+                await ctx.model.WeexStat.create(params);
+                break;
+            case "withdrawals": //提现
+                let data = {};
+                data.uid = arg.uid;
+                data.event_type = arg.event_type;
+                data.coin_type = arg.event_info.coin_type;
+                data.coin_amount = arg.event_info.coin_amount;
+                data.source = arg.source;
+                await ctx.model.WeexStat.create(data);
                 break;
         }
     }
