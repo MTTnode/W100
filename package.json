@@ -11,7 +11,7 @@
     "egg-redis": "^2.0.0",
     "egg-scripts": "^2.6.0",
     "egg-validate": "^1.0.0",
-    "egg-w100-payment": "^0.1.20",
+    "egg-w100-payment": "^0.1.21",
     "egg-weex-https": "^1.0.1",
     "egg-weex-ws": "^1.0.10",
     "moment": "^2.22.1"
