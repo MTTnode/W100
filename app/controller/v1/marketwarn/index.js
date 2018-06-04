@@ -96,11 +96,7 @@ class MarketwarnController extends Controller {
     let uid = ctx.arg.uid;
     let market = ctx.arg.market;
     app.redis.get('JPush_upprice_' + day + market + uid).then(val => {
-      console.log('这里执行========');
       app.redis.del('JPush_upprice_' + day + market + uid);
-      app.redis.get('JPush_upprice_' + day + market + uid).then(data =>{
-        console.log(data);
-      });
     });
     app.redis.get('JPush_downprice_' + day + market + uid).then(val => {
       app.redis.del('JPush_downprice_' + day + market + uid);
