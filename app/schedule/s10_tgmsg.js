@@ -1,6 +1,7 @@
 const moment = require("moment");
 const JPush = require("jpush-async").JPush;
-const client = JPush.buildClient('77bb191f81fb0b5cefffd2e0', '96401b931403dd89f4932627');
+// const client = JPush.buildClient('77bb191f81fb0b5cefffd2e0', '96401b931403dd89f4932627');  //test
+const client = JPush.buildClient('91777cced183caccae6c1db5', 'faf37fc9aae6c9e168748a63');   //prod
 
 module.exports = {
   schedule: {
