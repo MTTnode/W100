@@ -22,12 +22,12 @@ class MarketwarnController extends Controller {
       let params = {};
       params.market = ctx.arg.market;
       if(ctx.arg.upprice){
-        params.upprice = parseFloat(ctx.arg.upprice);
+        params.upprice = ctx.arg.upprice;
       }else{
         params.upprice = ctx.arg.upprice;
       }
       if(ctx.arg.downprice){
-        params.downprice = parseFloat(ctx.arg.downprice);
+        params.downprice = ctx.arg.downprice;
       }else{
         params.downprice = ctx.arg.downprice;
       }

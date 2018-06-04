@@ -8,8 +8,8 @@ module.exports = app => {
     token: { type: String },
     flag: { type: String },
     create_time: { type: Date, default: Date.now },
-    upprice: { type: Number },
-    downprice: { type: Number }  
+    upprice: { type:  String },
+    downprice: { type: String }  
   });
 
   return mongoose.model('Marketwarn', MarketwarnSchema, 'marketwarn');

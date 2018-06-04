@@ -20,7 +20,7 @@ module.exports = {
         //达到预警值
         ctx.app.redis.get('JPush_' + day + str + v.uid).then(val => {
           if (!val) {
-            if (v.upprice && (market.last > v.upprice)) {
+            if (v.upprice && (market.last > parseFloat(v.upprice))) {
               client.push()
                 .setPlatform('ios', 'android')
                 .setAudience(JPush.alias(v.uid))
@@ -37,7 +37,7 @@ module.exports = {
                   }
                 });
             }
-            if ((v.downprice && (market.last < v.downprice))) {
+            if (v.downprice && (market.last < parseFloat(v.downprice))) {
               client.push()
                 .setPlatform('ios', 'android')
                 .setAudience(JPush.alias(v.uid))

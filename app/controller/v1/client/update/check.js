@@ -10,7 +10,7 @@ class CheckController extends Controller {
           version: { type: 'string' },
           client: { type: 'string' },
         });
-        let res = await ctx.model.WeexVersion.find({}).sort({ create_time: -1 }).limit(1);
+        let res = await ctx.model.WeexVersion.find({"client":ctx.query.client}).sort({ create_time: -1 }).limit(1);
         let json = res[0];
         if(ctx.query.version == json.version){
           json["update_status"] = '0';
