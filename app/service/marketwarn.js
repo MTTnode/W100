@@ -6,7 +6,7 @@ class UpdateService extends Service {
   async addMarketwarn(params) {
     const {ctx, service, app} = this;
     let json = await ctx.model.Marketwarn.find({uid: params.uid, market: params.market});
-    if(json.length > 0){
+    if(json.length > 1){
       return {
         code: -1,
         data: null,

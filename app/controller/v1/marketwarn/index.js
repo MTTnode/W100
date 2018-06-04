@@ -2,19 +2,30 @@
 
 const Controller = require('egg').Controller;
 const _ = require("lodash");
+const moment = require("moment");
 
 class MarketwarnController extends Controller {
 
   async addMarketwarn() {
     const { ctx, service, app } = this;
-    if(ctx.request.body.market){
-      ctx.helper.pre("addTradewarn", {
-        market: { type: 'string' },
-        flag: { type: 'string' }
-      });
-    }else{
+    if(ctx.request.body._id){
       ctx.helper.pre("editTradewarn", {
         _id: { type: 'string' },
+        flag: { type: 'string' },
+        market: { type: 'string' }
+      });
+      let day = moment().format("YYYY-MM-DD");
+      let uid = ctx.arg.uid;
+      let market = ctx.arg.market;
+      app.redis.get('JPush_upprice_' + day + market + uid).then(val => {
+        app.redis.del('JPush_upprice_' + day + market + uid);
+      });
+      app.redis.get('JPush_downprice_' + day + market + uid).then(val => {
+        app.redis.del('JPush_downprice_' + day + market + uid);
+      });
+    }else{
+      ctx.helper.pre("addTradewarn", {
+        market: { type: 'string' },
         flag: { type: 'string' }
       });
     }
@@ -45,10 +56,10 @@ class MarketwarnController extends Controller {
         message: "请至少选择一个预警指标"
       }
     }
-    if(ctx.request.body.market){
-      ctx.helper.end("addTradewarn");
-    }else{
+    if(ctx.request.body._id){
       ctx.helper.end("editTradewarn");
+    }else{
+      ctx.helper.end("addTradewarn");
     }
   }
 
@@ -76,10 +87,24 @@ class MarketwarnController extends Controller {
   async delMarketwarn() {
     const { ctx, service, app } = this;
     ctx.helper.pre("delMarketwarn", {
-      _id: { type: 'string' }
+      _id: { type: 'string' },
+      market: { type: 'string' }
     });
+    let day = moment().format("YYYY-MM-DD");
     let params = {};
     params._id = ctx.arg._id;
+    let uid = ctx.arg.uid;
+    let market = ctx.arg.market;
+    app.redis.get('JPush_upprice_' + day + market + uid).then(val => {
+      console.log('这里执行========');
+      app.redis.del('JPush_upprice_' + day + market + uid);
+      app.redis.get('JPush_upprice_' + day + market + uid).then(data =>{
+        console.log(data);
+      });
+    });
+    app.redis.get('JPush_downprice_' + day + market + uid).then(val => {
+      app.redis.del('JPush_downprice_' + day + market + uid);
+    });
     ctx.body = await service.marketwarn.delMarketwarn(params);
     ctx.helper.end("delMarketwarn");
   }

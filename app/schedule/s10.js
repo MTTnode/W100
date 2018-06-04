@@ -18,9 +18,10 @@ module.exports = {
       let market = ctx.app.weexWs.getTodaySubscribe()[type][str];
       if (market) {
         //达到预警值
-        ctx.app.redis.get('JPush_' + day + str + v.uid).then(val => {
+        ctx.app.redis.get('JPush_upprice_' + day + str + v.uid).then(val => {
           if (!val) {
             if (v.upprice && (market.last > parseFloat(v.upprice))) {
+              ctx.app.redis.set('JPush_upprice_' + day + str + v.uid, v.uid, 'EX', 86400);
               client.push()
                 .setPlatform('ios', 'android')
                 .setAudience(JPush.alias(v.uid))
@@ -37,7 +38,12 @@ module.exports = {
                   }
                 });
             }
+          }
+        });
+        ctx.app.redis.get('JPush_downprice_' + day + str + v.uid).then(val => {
+          if (!val) {
             if (v.downprice && (market.last < parseFloat(v.downprice))) {
+              ctx.app.redis.set('JPush_downprice_' + day + str + v.uid, v.uid, 'EX', 86400);
               client.push()
                 .setPlatform('ios', 'android')
                 .setAudience(JPush.alias(v.uid))
@@ -54,7 +60,6 @@ module.exports = {
                   }
                 });
             }
-            ctx.app.redis.set('JPush_' + day + str + v.uid, v.uid, 'EX', 86400);
           }
         });
       }
