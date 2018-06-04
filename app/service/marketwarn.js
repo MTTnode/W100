@@ -6,12 +6,14 @@ class UpdateService extends Service {
   async addMarketwarn(params) {
     const {ctx, service, app} = this;
     let json = await ctx.model.Marketwarn.find({uid: params.uid, market: params.market});
-    if(json.length > 1){
-      return {
-        code: -1,
-        data: null,
-        message: "同一个交易对只能添加一个预警"
-      };
+    if(!params._id){
+      if(json.length > 0){
+        return {
+          code: -1,
+          data: null,
+          message: "同一个交易对只能添加一个预警"
+        };
+      }
     }
     let data = await ctx.model.Marketwarn.find({uid: params.uid});
     if(data.length >= 10){

@@ -25,7 +25,7 @@ module.exports = {
               client.push()
                 .setPlatform('ios', 'android')
                 .setAudience(JPush.alias(v.uid))
-                .setNotification('Hi, JPush', JPush.android('weex行情预警：【' + v.market + '】价格已经到达预警值【' + v.upprice + '】，请注意风险控制', null, 1), JPush.ios('weex行情预警：【' + v.market + '】价格已经到达预警值【' + v.upprice + '】，请注意风险控制', 'sound', 1)).setMessage('msg content').setOptions(null, 60)
+                .setNotification('Hi, JPush', JPush.android('【' + v.market + '】价格已经到达预警值【' + v.upprice + '】，请注意风险控制', null, 1), JPush.ios('weex行情预警：【' + v.market + '】价格已经到达预警值【' + v.upprice + '】，请注意风险控制', 'sound', 1)).setMessage('msg content').setOptions(null, 60)
                 .send(function (err, res) {
                   if (err) {
                     if (err instanceof JPush.APIConnectionError) {
@@ -47,7 +47,7 @@ module.exports = {
               client.push()
                 .setPlatform('ios', 'android')
                 .setAudience(JPush.alias(v.uid))
-                .setNotification('Hi, JPush', JPush.android('weex行情预警：【' + v.market + '】价格已经到达预警值【' + v.downprice + '】，请注意风险控制', null, 1), JPush.ios('weex行情预警：【' + v.market + '】价格已经到达预警值【' + v.downprice + '】，请注意风险控制')).setMessage('msg content').setOptions(null, 60)
+                .setNotification('Hi, JPush', JPush.android('【' + v.market + '】价格已经到达预警值【' + v.downprice + '】，请注意风险控制', null, 1), JPush.ios('weex行情预警：【' + v.market + '】价格已经到达预警值【' + v.downprice + '】，请注意风险控制')).setMessage('msg content').setOptions(null, 60)
                 .send(function (err, res) {
                   if (err) {
                     if (err instanceof JPush.APIConnectionError) {
