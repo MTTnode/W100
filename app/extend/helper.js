@@ -7,7 +7,7 @@ module.exports = {
         this.ctx.arg = _.merge(this.ctx.arg, this.ctx.headers);
         this.ctx.arg._time = new Date().getTime();
         this.ctx.arg.ip = this.ctx.headers['x-real-ip'];
-        this.app.logger.info(m, this.ctx.ip, JSON.stringify(this.ctx.arg), "begin");
+        this.app.logger.info(m, this.ctx.headers['x-real-ip'], JSON.stringify(this.ctx.arg), "begin");
         this.ctx.arg.func = m;
         //校验参数
         this.ctx.validate(argRule, this.ctx.arg);

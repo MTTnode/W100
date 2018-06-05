@@ -22,10 +22,10 @@ module.exports = () => {
             }
             ctx.status = status;
             ctx.app.logger.error("",
-                ctx.ip,
-                JSON.stringify(ctx.arg),
-                JSON.stringify(ctx.body), "end",
-                new Date().getTime() - ctx.arg._time);
+              ctx.headers['x-real-ip'],
+              JSON.stringify(ctx.arg),
+              JSON.stringify(ctx.body), "end",
+              new Date().getTime() - ctx.arg._time);
 
             await ctx.model.MessageLogs.create({
                 create_time: moment(new Date().getTime()).format('YYYY-MM-DD HH:mm:ss'),
