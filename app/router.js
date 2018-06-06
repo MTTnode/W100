@@ -13,6 +13,7 @@ module.exports = app => {
   router.get('/w100/v1/aid/config/getCurrency', controller.v1.aid.config.getCurrency);//获取所有币种
   router.get('/w100/v1/aid/config/banner',  controller.v1.aid.config.banner);//banner公告
   router.get('/w100/v1/aid/exchage/quot', controller.v1.aid.exchange.quot);//获取其他交易所数据
+  router.get('/w100/v1/aid/exchage/quots', controller.v1.aid.exchange.quots);//获取其他交易所数据
   router.post('/w100/v1/payment/recharge', controller.v1.payment.index.recharge);//充值
   router.post('/w100/v1/payment/callback', controller.v1.payment.index.callback);//回调
   router.get('/w100/v1/payment/getOrderStatus', controller.v1.payment.index.getOrderStatus);//获取订单状态
