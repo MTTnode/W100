@@ -2,7 +2,6 @@
 
 const Controller = require('egg').Controller;
 const _ = require("lodash");
-const transform = require('currency-transform');
 
 class ExchangeController extends Controller {
   async quot() {
