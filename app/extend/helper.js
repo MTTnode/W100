@@ -60,7 +60,8 @@ module.exports = {
                 'DASHUSD',
                 'ETCUSD',
                 'XRPUSD',
-                'DOGEUSD'
+                'DOGEUSD',
+                'XLMUSD'
             ],
             "BTC": [
                 'BCHBTC',

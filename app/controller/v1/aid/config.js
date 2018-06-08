@@ -34,7 +34,7 @@ class ConfigController extends Controller {
         });
         ctx.body = {
             code: 0,
-            data: ["BTC","BCH","LTC","ETH","ZEC","DASH","ETC","XRP","DOGE"]
+            data: ["BTC","BCH","LTC","ETH","ZEC","DASH","ETC","XRP","DOGE", "XLM"]
         };
         ctx.helper.end("getCurrency");
     }
