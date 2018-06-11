@@ -1,0 +1,12 @@
+{
+    "eggPlugin": {
+        "name": "bcex",
+        "env": [
+            "local",
+            "test",
+            "unittest",
+            "prod",
+            "dev"
+        ]
+    }
+}

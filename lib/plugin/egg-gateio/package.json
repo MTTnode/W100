@@ -1,0 +1,12 @@
+{
+    "eggPlugin": {
+        "name": "gateio",
+        "env": [
+            "local",
+            "test",
+            "unittest",
+            "prod",
+            "dev"
+        ]
+    }
+}

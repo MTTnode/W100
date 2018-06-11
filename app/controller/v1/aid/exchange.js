@@ -77,13 +77,13 @@ class ExchangeController extends Controller {
       item.data = [];
       ctx.bian.get24hr().forEach(res => {
         if (res.symbol == element) {
-          res.exchage = '币安';
+          res.exchage = 'Binance';
           item.data.push(res);
         }
       });
       ctx.huobi.get24hr().forEach(res => {
         if (res.symbol == element) {
-          res.exchage = '火币';
+          res.exchage = 'Huobi';
           item.data.push(res);
         }
       });
@@ -96,6 +96,30 @@ class ExchangeController extends Controller {
       ctx.ZB.get24hr().forEach(res => {
         if (res.symbol == element) {
           res.exchage = 'ZB';
+          item.data.push(res);
+        }
+      });
+      ctx.bitstamp.get24hr().forEach(res => {
+        if (res.symbol == element) {
+          res.exchage = 'Bitstamp';
+          item.data.push(res);
+        }
+      });
+      ctx.gateio.get24hr().forEach(res => {
+        if (res.symbol == element) {
+          res.exchage = 'Gate';
+          item.data.push(res);
+        }
+      });
+      ctx.bcex.get24hr().forEach(res => {
+        if (res.symbol == element) {
+          res.exchage = 'BCEX';
+          item.data.push(res);
+        }
+      });
+      ctx.kraken.get24hr().forEach(res => {
+        if (res.symbol == element) {
+          res.exchage = 'Kraken';
           item.data.push(res);
         }
       });

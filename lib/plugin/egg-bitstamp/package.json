@@ -1,0 +1,12 @@
+{
+    "eggPlugin": {
+        "name": "bitstamp",
+        "env": [
+            "local",
+            "test",
+            "unittest",
+            "prod",
+            "dev"
+        ]
+    }
+}

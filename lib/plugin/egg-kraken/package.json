@@ -1,0 +1,16 @@
+{
+    "eggPlugin": {
+        "name": "kraken",
+        "env": [
+            "local",
+            "test",
+            "unittest",
+            "prod",
+            "dev"
+        ]
+    },
+    "dependencies": {
+        "got": "^7.1.0",
+        "qs": ">=6.4.0"
+    }
+}

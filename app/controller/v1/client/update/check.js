@@ -12,7 +12,7 @@ class CheckController extends Controller {
         });
         let res = await ctx.model.WeexVersion.find({"client":ctx.query.client}).sort({ create_time: -1 }).limit(1);
         let json = res[0];
-        json.remark = json.remark.replace('\\n', '\n');
+        json.remark = json.remark.replace(/\\n/g, '\n');
         if(ctx.query.version == json.version){
           json["update_status"] = '0';
         }

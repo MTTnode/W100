@@ -28,6 +28,31 @@ exports.ZB = {
     path: path.join(__dirname, '../lib/plugin/egg-ZB'),
 };
 
+exports.bithumb = {
+  enable: true,
+  path: path.join(__dirname, '../lib/plugin/egg-bithumb'),
+};
+
+exports.bitstamp = {
+  enable: true,
+  path: path.join(__dirname, '../lib/plugin/egg-bitstamp'),
+};
+
+exports.gateio = {
+  enable: true,
+  path: path.join(__dirname, '../lib/plugin/egg-gateio'),
+};
+
+exports.bcex = {
+  enable: true,
+  path: path.join(__dirname, '../lib/plugin/egg-bcex'),
+};
+
+exports.kraken = {
+  enable: true,
+  path: path.join(__dirname, '../lib/plugin/egg-kraken'),
+};
+
 //defend
 exports.defend = {
   enable: true,
@@ -48,6 +73,7 @@ exports.weexWs = {
 exports.weexHttps = {
     enable: true,
     package: 'egg-weex-https',
+    // path: path.join(__dirname, '../lib/plugin/egg-weex-https'),
 };
 
 //egg-logrotator
