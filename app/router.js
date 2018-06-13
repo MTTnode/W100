@@ -41,6 +41,7 @@ module.exports = app => {
   router.get('/ad/getDAU', controller.ad.statistics.getDAU); //后台管理统计
   router.get('/ad/update/checkList',  controller.ad.update.checkList);//app版本列表
   router.post('/ad/update/addVersion',  controller.ad.update.addVaersion);//添加app版本
+  router.get('/ad/order/orderList',  controller.ad.order.orderList);//app版本列表
 
   router.get('*', async (ctx, next) => {
     ctx.service.httpDefend.addHttp(ctx, 404);
