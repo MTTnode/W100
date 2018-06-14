@@ -1,20 +1,18 @@
 module.exports = {
     schedule: {
         interval: '20s',
-        type: 'all',
+        type: 'worker',
     }, async task(ctx) {
         let res = {};
         res.transactList = await ctx.service.banner.transactList();
         res.banner = await ctx.service.banner.bannerList();
         ctx.app.cache = res;
-
+        // return;
         //暂时不可用
         // ctx.bithumb.reset24hr(ctx.helper.getMarkets()["USD"], function () {
         //   // console.log(ctx.bithumb.get24hr());
         //   console.log("init bithumb end");
         // });
-
-        // return;
 
         //可用
         ctx.bitstamp.reset24hr(ctx.helper.getMarkets()["USD"], function () {
