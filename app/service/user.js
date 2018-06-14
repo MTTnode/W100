@@ -29,10 +29,10 @@ class UserService extends Service {
         var ret = ctx.helper.getPriceChange(userAsset.data.total, total);
         ret.cny = "￥" + (userAsset.data.total * Number(rate.cash_buy_rate)).toFixed(2);
         ret.usd = "$" + (userAsset.data.total).toFixed(2);
-        // ret.cny_leverage = "￥" + (userAsset.data.leverage_total * Number(rate.cash_buy_rate)).toFixed(2);
-        // ret.usd_leverage = "$" + (userAsset.data.leverage_total).toFixed(2);
-        // ret.total_cny = "￥" + (userAsset.data.total * Number(rate.cash_buy_rate)+userAsset.data.leverage_total * Number(rate.cash_buy_rate)).toFixed(2);
-        // ret.total_usd = "$" + (userAsset.data.total + userAsset.data.leverage_total).toFixed(2);
+        ret.cny_leverage = "￥" + (userAsset.data.leverage_total * Number(rate.cash_buy_rate)).toFixed(2);
+        ret.usd_leverage = "$" + (userAsset.data.leverage_total).toFixed(2);
+        ret.total_cny = "￥" + (userAsset.data.total * Number(rate.cash_buy_rate)+userAsset.data.leverage_total * Number(rate.cash_buy_rate)).toFixed(2);
+        ret.total_usd = "$" + (userAsset.data.total + userAsset.data.leverage_total).toFixed(2);
         return {
             code: 0,
             data: ret,
