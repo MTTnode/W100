@@ -21,8 +21,9 @@ module.exports = () => {
                 ctx.body.detail = err.errors;
             }
             ctx.status = status;
+            
             ctx.app.logger.error("",
-              ctx.headers['x-real-ip'],
+              ctx.headers['x-forwarded-for'].split(',')[0],
               JSON.stringify(ctx.arg),
               JSON.stringify(ctx.body), "end",
               new Date().getTime() - ctx.arg._time);

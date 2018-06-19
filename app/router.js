@@ -42,6 +42,10 @@ module.exports = app => {
   router.get('/ad/update/checkList',  controller.ad.update.checkList);//app版本列表
   router.post('/ad/update/addVersion',  controller.ad.update.addVaersion);//添加app版本
   router.get('/ad/order/orderList',  controller.ad.order.orderList);//app版本列表
+  router.get('/ad/role/userList',  controller.ad.role.userList);//后台用户列表
+  router.post('/ad/role/addUser',  controller.ad.role.addUser);//添加后台用户
+  router.post('/ad/role/delUser',  controller.ad.role.delUser);//删除后台用户
+  router.post('/ad/role/usrLogin',  controller.ad.role.usrLogin);//删除后台用户
 
   router.get('*', async (ctx, next) => {
     ctx.service.httpDefend.addHttp(ctx, 404);

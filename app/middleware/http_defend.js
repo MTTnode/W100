@@ -6,11 +6,12 @@ module.exports = () => {
     // begin add cc 临时放过
     // return await next();
     // end add cc 临时放过
+    
     let resBody = { code: 1002, message: '' };
     let arr = [];
-    if(ctx.headers['x-real-ip']){
+    if(ctx.headers['x-forwarded-for'].split(',')[0]){
       arr.push({
-        'ip': ctx.headers['x-real-ip']
+        'ip': ctx.headers['x-forwarded-for'].split(',')[0]
       });
     }
     if(ctx.headers.uid != -1){
