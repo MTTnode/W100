@@ -1,15 +1,15 @@
 'use strict';
 const Service = require('egg').Service;
 const otplib = require('otplib');
+const CryptoJS = require('crypto-js');
 
 class RoleService extends Service {
 
   async usrLogin(param) {
     const {ctx, service, app} = this;
     let res = '';
-    let data = await ctx.model.WeexUser.find({name: param.name, password: param.password});
-    console.log('==============用户登陆=============');
-    console.log(data);
+    let pwd = CryptoJS.AES.decrypt(param.password, 'weex').toString(CryptoJS.enc.Utf8);
+    let data = await ctx.model.WeexUser.find({name: param.name, password: pwd});
     if(data.length > 0){
       res = {
         code: 0,
