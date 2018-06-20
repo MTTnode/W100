@@ -26,7 +26,7 @@ class OrderController extends Controller {
         if(ctx.query.time1 && ctx.query.time2){
           param.create_time = {'$lte': date2, '$gte': date1};
         }
-        let data = await ctx.model.CoinsDoOrder.find(param);
+        let data = await ctx.model.CoinsDoOrder.find(param).sort({ create_time: -1 });
         let res = {};
         res.list = data;
         res.total = data.length;
