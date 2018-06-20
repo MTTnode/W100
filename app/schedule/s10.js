@@ -4,7 +4,7 @@ module.exports = {
     type: 'worker',
   },
   async task(ctx) {
-    ctx.app.weexHttps.setRate(ctx);
+    // ctx.app.weexHttps.setRate(ctx);
   }
 
 };

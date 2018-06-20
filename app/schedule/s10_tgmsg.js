@@ -12,6 +12,8 @@ module.exports = {
     if (await ctx.app.redis.setnx("LOOP_MESSAGE_DB", "1") == 1) {
       ctx.logger.info("loopDBMessage");
       // await ctx.app.tg.loopDBMessage(ctx.model.MessageLogs);
+      ctx.app.weexHttps.setRate(ctx);
+      
       try {
         let day = moment().format("YYYY-MM-DD");
         let res = await ctx.service.marketwarn.getMarketwarnByday();
