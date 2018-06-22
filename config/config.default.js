@@ -93,6 +93,13 @@ module.exports = appInfo => {
         "queryurl": "http://uat.coinsdo.com/v1/morder/query",
         "merch_id": "10000",
         "merch_key": "ZDcyZTBlMDBiYjYyMTlmOTA0ZDhlODUxOTgxOTk0ZDY5YjBkYWMzZQ=="
+      }, dora: {
+        "api_key":"49f38b1b8cfdd122ea151af32528129c",
+        "company_id":45,
+        "callbackurl": "https://wwwapp.weex.com:8443/w100/v1/payment/dora_callback",
+        "url": "http://dora-elb-public-575851356.ap-northeast-1.elb.amazonaws.com/DoraCounterMobile/Deposit/Index",
+        "charset":"UTF-8",
+        "api_version": "1.5",
       }
     }
   };
