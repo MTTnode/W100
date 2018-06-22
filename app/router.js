@@ -18,6 +18,9 @@ module.exports = app => {
   router.post('/w100/v1/payment/callback', controller.v1.payment.index.callback);//回调
   router.get('/w100/v1/payment/getOrderStatus', controller.v1.payment.index.getOrderStatus);//获取订单状态
   router.post('/w100/v1/payment/setOrderStatus', controller.v1.payment.index.setOrderStatus);//获取订单状态
+  router.post('/w100/v1/payment/dora_generate_orders', controller.v1.payment.dora.generateOrders);//dora生成订单
+  router.post('/w100/v1/payment/dora_callback', controller.v1.payment.dora.callback);//回调
+  router.get('/w100/v1/payment/dora_orders_list', controller.v1.payment.dora.getOrdersList);//获取用户单列表
   router.get('/w100/v1/payment/getOrderList', controller.v1.payment.index.getOrderList);//获取订单状态
   router.get('/w100/v1/client/update/check',  controller.v1.client.update.check.checkVer);//app版本检查
   router.post('/w100/v1/marketwarn/addMarketwarn', controller.v1.marketwarn.index.addMarketwarn);//新增预警
@@ -46,6 +49,7 @@ module.exports = app => {
   router.post('/ad/role/addUser',  controller.ad.role.addUser);//添加后台用户
   router.post('/ad/role/delUser',  controller.ad.role.delUser);//删除后台用户
   router.post('/ad/role/usrLogin',  controller.ad.role.usrLogin);//删除后台用户
+  router.get('/ad/order/payment_orderList',  controller.ad.paymentorder.orderList);//获取dora支付的列表
 
   router.get('*', async (ctx, next) => {
     ctx.service.httpDefend.addHttp(ctx, 404);
