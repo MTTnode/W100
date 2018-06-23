@@ -4,6 +4,7 @@ const Controller = require('egg').Controller;
 const _ = require("lodash");
 let dateFormat = require('date-format');
 let crypto = require('crypto');
+const moment = require('moment');
 
 let OrderStatus = {
     "notArrived": "1", //未到账 ,等待支付
@@ -75,6 +76,11 @@ class DoraController extends Controller {
             order_number: "", //订单号
             urlpay: "", //充值订单URL
         };
+
+        let redis = this.ctx.app.redis;
+        //生成weexid  需要此处用来计数吗？
+        let strKey = this.ctx.service.payment.getPaymentOrderId();
+        let nOrderId = await redis.incr(strKey);
 
         //console.log(ctx.querystring);
         //console.log(ctx.request.body);
@@ -179,6 +185,7 @@ class DoraController extends Controller {
             //order_fee: { type: String },        //费用
             exchange_rate: rate.cash_sell_rate, //到账时汇率
             client_ip: client_ip, //客户请求生成订单时的IP
+            payment_order_id: nOrderId, //唯一的订单号
         };
 
         let obj = await this.ctx.service.payment.create(ctx.model.PaymentOrder, objOrder);
@@ -270,6 +277,33 @@ class DoraController extends Controller {
         let company_id = this.config.w100Payment.client.dora.company_id;
         let api_version = this.config.w100Payment.client.dora.api_version;
 
+        let redis = this.ctx.app.redis;
+        let logdb = this.ctx.model.MessageLogs;
+
+        //lock user
+        if (await redis.setnx(this.getLockKey(this.ctx.arg.company_order_no), "1") == 0) {
+            app.logger.error("[dora.callback] lock error", this.ctx.arg.company_order_no);
+            await logdb.create({
+                create_time: moment(new Date().getTime()).format('YYYY-MM-DD HH:mm:ss'),
+                message_type: "exception",
+                uid: 0,
+                key: "",
+                info: "[dora]回调失败，因为订单被锁, 订单id为" + this.ctx.arg.company_order_no,
+                send_flag: false,
+            });
+            ctx.body = {
+                "status": 200,
+                "error_msg": "订单异常，被锁。", //status 非0时，才可以带返回信息
+                "company_order_no": this.ctx.arg.company_order_no,
+                "trade_no": this.ctx.arg.trade_no,
+            };
+
+            ctx.helper.end("callback");
+
+            return;
+        }
+
+        //return;
         //1、根据订单查订单记录
         let objQuery = {
             order_number: this.ctx.arg.company_order_no,
@@ -285,6 +319,9 @@ class DoraController extends Controller {
             };
             this.logger.error("[dora.callback]没找到订单", this.ctx.arg.company_order_no, this.ctx.arg.trade_no, this.ctx.arg.actual_amount, this.ctx.arg.sign, callback_ip)
             ctx.helper.end("callback");
+
+            await redis.del(this.getLockKey(this.ctx.arg.company_order_no));
+
             return;
         }
 
@@ -302,6 +339,7 @@ class DoraController extends Controller {
 
             this.logger.error("[dora.callback]找到订单重复被通知", this.ctx.arg.company_order_no, this.ctx.arg.trade_no, this.ctx.arg.actual_amount, this.ctx.arg.sign, retQuery[0].order_status, callback_ip);
             ctx.helper.end("callback");
+            await redis.del(this.getLockKey(this.ctx.arg.company_order_no));
             return;
         }
 
@@ -315,6 +353,7 @@ class DoraController extends Controller {
             };
             this.logger.error("[dora.callback]订单金额参数异常", this.ctx.arg.company_order_no, this.ctx.arg.trade_no, this.ctx.arg.actual_amount, this.ctx.arg.sign, this.ctx.arg.original_amount, retQuery[0].amount, callback_ip);
             ctx.helper.end("callback");
+            await redis.del(this.getLockKey(this.ctx.arg.company_order_no));
             return;
         }
 
@@ -328,6 +367,7 @@ class DoraController extends Controller {
             };
             this.logger.error("[dora.callback]订单金额异常", this.ctx.arg.company_order_no, this.ctx.arg.trade_no, this.ctx.arg.actual_amount, this.ctx.arg.sign, this.ctx.arg.original_amount, retQuery[0].amount, callback_ip);
             ctx.helper.end("callback");
+            await redis.del(this.getLockKey(this.ctx.arg.company_order_no));
             return;
         }
 
@@ -340,6 +380,7 @@ class DoraController extends Controller {
                 "trade_no": this.ctx.arg.trade_no,
             };
             ctx.helper.end("callback");
+            await redis.del(this.getLockKey(this.ctx.arg.company_order_no));
             return;
         }
 
@@ -367,6 +408,8 @@ class DoraController extends Controller {
                 "company_order_no": this.ctx.arg.company_order_no,
                 "trade_no": this.ctx.arg.trade_no,
             };
+            await redis.del(this.getLockKey(this.ctx.arg.company_order_no));
+            ctx.helper.end("callback");
             return;
         }
 
@@ -384,14 +427,14 @@ class DoraController extends Controller {
             _id: retQuery[0]._id,
             order_status: OrderStatus["notArrived"],
         };
-
+        //更新是否带锁
         let retUpdate = await this.ctx.service.payment.update(ctx.model.PaymentOrder, _json_condition /*retQuery[0]._id*/ , jsonUpdate);
         //n nModified ok
         if (1 == retUpdate.nModified && 1 == retUpdate.ok) {
             this.logger.error("[dora.callback]给账户增加资产,begin", retQuery[0].uid, this.ctx.arg.company_order_no, this.ctx.arg.trade_no, this.ctx.arg.actual_amount, this.ctx.arg.sign, this.ctx.arg.original_amount, retQuery[0].amount, actual_amount_usd);
 
             //通知python给用户增加资产
-            let retWeex = await this.ctx.service.payment.addZiChan(retQuery[0].uid, actual_amount_usd, "USD", "dora", this.ctx.arg.company_order_no, this.ctx.arg.trade_no);
+            let retWeex = await this.ctx.service.payment.addZiChan(retQuery[0].uid, retQuery[0].payment_order_id, actual_amount_usd, "USD", "dora", this.ctx.arg.company_order_no, this.ctx.arg.trade_no);
             if(0 != retWeex){
                 this.logger.error("[dora.callback]给账户增加资产,end,失败,需走人工核实", retQuery[0].uid, this.ctx.arg.company_order_no, this.ctx.arg.trade_no, this.ctx.arg.actual_amount, this.ctx.arg.sign, this.ctx.arg.original_amount, retQuery[0].amount, actual_amount_usd);
             }
@@ -405,6 +448,8 @@ class DoraController extends Controller {
                 "trade_no": this.ctx.arg.trade_no,
 
             };
+            await redis.del(this.getLockKey(this.ctx.arg.company_order_no));
+            ctx.helper.end("callback");
             return;
         }
 
@@ -415,6 +460,9 @@ class DoraController extends Controller {
             "trade_no": this.ctx.arg.trade_no,
             "status": 0
         }
+
+        await redis.del(this.getLockKey(this.ctx.arg.company_order_no));
+        ctx.helper.end("callback");
     }
 
 
