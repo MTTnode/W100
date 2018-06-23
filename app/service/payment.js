@@ -128,6 +128,8 @@ class PaymentService extends Service {
             return "核心返回异常";
         }
         app.logger.info("[payment.addZiChan] weex 返回", this.ctx.arg, weexParam, weexRes);
+
+        return 0;
     }
 
 

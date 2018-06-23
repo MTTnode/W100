@@ -86,6 +86,9 @@ class DoraController extends Controller {
         let urlBase = this.config.w100Payment.client.dora.url;
         let charset = this.config.w100Payment.client.dora.charset;
         let api_version = this.config.w100Payment.client.dora.api_version;
+        //单笔充值的最大最小额度
+        let amount_min = this.config.w100Payment.client.dora.amount_min;
+        let amount_max = this.config.w100Payment.client.dora.amount_max;
         // let app_id = "app_id_weex"; //Y
         // let _format = "app_id_weex"; //Y
 
@@ -107,11 +110,32 @@ class DoraController extends Controller {
         //请求方的IP地址
         let client_ip = this.ctx.ip;
 
+        let n = isNaN(player_id);
+        //用户ID的校验
+        if(true==isNaN(player_id) || Number.parseInt(player_id) <= 0 ){
+            retBody.code = 1003;
+            retBody.message = "用户ID异常"+player_id;
+            ctx.body = retBody;
+            ctx.helper.end("generateOrders");
+            return;
+        }
+
+        //amount_money校验
+        if(true==isNaN(amount_money) || amount_money<amount_min || amount_money>amount_max ){
+            retBody.code = 1004;
+            retBody.message = "充值金额异常"+amount_money;
+            ctx.body = retBody;
+            ctx.helper.end("generateOrders");
+            return;
+        }
+
+
         let nowTime = new Date();
         let _timestamp = dateFormat.asString('yyyyMMdd hhmmss', nowTime);
         //生成订单号 20180615182727870-->可以考虑外加用户ID
         let company_order_no = dateFormat.asString('yyyyMMddhhmmssSSS', new Date());
-        let trade_no = company_order_no;
+        company_order_no = company_order_no + "" + player_id;
+        //let trade_no = company_order_no;
         //console.log('=======================生成订单号========================', company_order_no);
 
         //获取当前汇率 schedule s10.js从python那边定时拉取数据
@@ -177,7 +201,7 @@ class DoraController extends Controller {
 
             retBody.order_number = company_order_no;
 
-            this.logger.info("dora.generateOrders生成订单", urlPayOrder);
+            this.logger.info("[dora.generateOrders]生成订单", urlPayOrder);
         } else {
             retBody.code = 1002;
             retBody.message = "error, db创建订单失败!";
@@ -259,7 +283,7 @@ class DoraController extends Controller {
                 "company_order_no": this.ctx.arg.company_order_no,
                 "trade_no": this.ctx.arg.trade_no,
             };
-            this.logger.error("没找到订单", this.ctx.arg.company_order_no, this.ctx.arg.trade_no, this.ctx.arg.actual_amount, this.ctx.arg.sign, callback_ip)
+            this.logger.error("[dora.callback]没找到订单", this.ctx.arg.company_order_no, this.ctx.arg.trade_no, this.ctx.arg.actual_amount, this.ctx.arg.sign, callback_ip)
             ctx.helper.end("callback");
             return;
         }
@@ -272,11 +296,24 @@ class DoraController extends Controller {
                 "company_order_no": this.ctx.arg.company_order_no,
                 "trade_no": this.ctx.arg.trade_no,
             };
-            ctx.set('show-response-time', "xxxx");
-            //ctx.set('Content-Type', 'application/json');
-            ctx.set("charset", "UTF-8");
+            // ctx.set('show-response-time', "xxxx");
+            // ctx.set('Content-Type', 'application/json');
+            // ctx.set("charset", "UTF-8");
 
-            this.logger.error("找到订单重复被通知", this.ctx.arg.company_order_no, this.ctx.arg.trade_no, this.ctx.arg.actual_amount, this.ctx.arg.sign, retQuery[0].order_status, callback_ip);
+            this.logger.error("[dora.callback]找到订单重复被通知", this.ctx.arg.company_order_no, this.ctx.arg.trade_no, this.ctx.arg.actual_amount, this.ctx.arg.sign, retQuery[0].order_status, callback_ip);
+            ctx.helper.end("callback");
+            return;
+        }
+
+        //amount_money校验
+        if(true==isNaN(this.ctx.arg.actual_amount) || true==isNaN(this.ctx.arg.original_amount) ){
+            ctx.body = {
+                "status": 206,
+                "error_msg": "订单金额参数异常", //status 非0时，才可以带返回信息
+                "company_order_no": this.ctx.arg.company_order_no,
+                "trade_no": this.ctx.arg.trade_no,
+            };
+            this.logger.error("[dora.callback]订单金额参数异常", this.ctx.arg.company_order_no, this.ctx.arg.trade_no, this.ctx.arg.actual_amount, this.ctx.arg.sign, this.ctx.arg.original_amount, retQuery[0].amount, callback_ip);
             ctx.helper.end("callback");
             return;
         }
@@ -289,7 +326,7 @@ class DoraController extends Controller {
                 "company_order_no": this.ctx.arg.company_order_no,
                 "trade_no": this.ctx.arg.trade_no,
             };
-            this.logger.error("订单金额异常", this.ctx.arg.company_order_no, this.ctx.arg.trade_no, this.ctx.arg.actual_amount, this.ctx.arg.sign, this.ctx.arg.original_amount, retQuery[0].amount, callback_ip);
+            this.logger.error("[dora.callback]订单金额异常", this.ctx.arg.company_order_no, this.ctx.arg.trade_no, this.ctx.arg.actual_amount, this.ctx.arg.sign, this.ctx.arg.original_amount, retQuery[0].amount, callback_ip);
             ctx.helper.end("callback");
             return;
         }
@@ -306,7 +343,7 @@ class DoraController extends Controller {
             return;
         }
 
-        //转换成美元 toFixed(2) 需要截取精度吗 
+        //转换成美元 toFixed(2) 需要截取精度吗 -->不可以用toFixed
         let actual_amount_usd = this.ctx.arg.actual_amount / retQuery[0].exchange_rate;
 
         let order_status = OrderStatus["Arrived"];
@@ -351,9 +388,13 @@ class DoraController extends Controller {
         let retUpdate = await this.ctx.service.payment.update(ctx.model.PaymentOrder, _json_condition /*retQuery[0]._id*/ , jsonUpdate);
         //n nModified ok
         if (1 == retUpdate.nModified && 1 == retUpdate.ok) {
+            this.logger.error("[dora.callback]给账户增加资产,begin", retQuery[0].uid, this.ctx.arg.company_order_no, this.ctx.arg.trade_no, this.ctx.arg.actual_amount, this.ctx.arg.sign, this.ctx.arg.original_amount, retQuery[0].amount, actual_amount_usd);
+
             //通知python给用户增加资产
             let retWeex = await this.ctx.service.payment.addZiChan(retQuery[0].uid, actual_amount_usd, "USD", "dora", this.ctx.arg.company_order_no, this.ctx.arg.trade_no);
-            console.log("-----", retWeex);
+            if(0 != retWeex){
+                this.logger.error("[dora.callback]给账户增加资产,end,失败,需走人工核实", retQuery[0].uid, this.ctx.arg.company_order_no, this.ctx.arg.trade_no, this.ctx.arg.actual_amount, this.ctx.arg.sign, this.ctx.arg.original_amount, retQuery[0].amount, actual_amount_usd);
+            }
         } else {
             this.logger.error("[dora.callback]修改订单状态异常", retUpdate.n, retUpdate.ok, retUpdate.nModified, this.ctx.arg.company_order_no, this.ctx.arg.trade_no, this.ctx.arg.actual_amount, this.ctx.arg.sign, this.ctx.arg.original_amount, retQuery[0].amount, actual_amount_usd);
 
