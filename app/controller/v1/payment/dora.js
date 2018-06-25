@@ -4,6 +4,7 @@ const Controller = require('egg').Controller;
 const _ = require("lodash");
 let dateFormat = require('date-format');
 let crypto = require('crypto');
+const moment = require('moment');
 
 let OrderStatus = {
     "notArrived": "1", //未到账 ,等待支付
@@ -76,6 +77,11 @@ class DoraController extends Controller {
             urlpay: "", //充值订单URL
         };
 
+        let redis = this.ctx.app.redis;
+        //生成weexid  需要此处用来计数吗？
+        let strKey = this.ctx.service.payment.getPaymentOrderId();
+        let nOrderId = await redis.incr(strKey);
+
         //console.log(ctx.querystring);
         //console.log(ctx.request.body);
 
@@ -86,6 +92,9 @@ class DoraController extends Controller {
         let urlBase = this.config.w100Payment.client.dora.url;
         let charset = this.config.w100Payment.client.dora.charset;
         let api_version = this.config.w100Payment.client.dora.api_version;
+        //单笔充值的最大最小额度
+        let amount_min = this.config.w100Payment.client.dora.amount_min;
+        let amount_max = this.config.w100Payment.client.dora.amount_max;
         // let app_id = "app_id_weex"; //Y
         // let _format = "app_id_weex"; //Y
 
@@ -107,11 +116,32 @@ class DoraController extends Controller {
         //请求方的IP地址
         let client_ip = this.ctx.ip;
 
+        let n = isNaN(player_id);
+        //用户ID的校验
+        if(true==isNaN(player_id) || Number.parseInt(player_id) <= 0 ){
+            retBody.code = 1003;
+            retBody.message = "用户ID异常"+player_id;
+            ctx.body = retBody;
+            ctx.helper.end("generateOrders");
+            return;
+        }
+
+        //amount_money校验
+        if(true==isNaN(amount_money) || amount_money<amount_min || amount_money>amount_max ){
+            retBody.code = 1004;
+            retBody.message = "充值金额异常"+amount_money;
+            ctx.body = retBody;
+            ctx.helper.end("generateOrders");
+            return;
+        }
+
+
         let nowTime = new Date();
         let _timestamp = dateFormat.asString('yyyyMMdd hhmmss', nowTime);
         //生成订单号 20180615182727870-->可以考虑外加用户ID
         let company_order_no = dateFormat.asString('yyyyMMddhhmmssSSS', new Date());
-        let trade_no = company_order_no;
+        company_order_no = company_order_no + "" + player_id;
+        //let trade_no = company_order_no;
         //console.log('=======================生成订单号========================', company_order_no);
 
         //获取当前汇率 schedule s10.js从python那边定时拉取数据
@@ -155,6 +185,7 @@ class DoraController extends Controller {
             //order_fee: { type: String },        //费用
             exchange_rate: rate.cash_sell_rate, //到账时汇率
             client_ip: client_ip, //客户请求生成订单时的IP
+            payment_order_id: nOrderId, //唯一的订单号
         };
 
         let obj = await this.ctx.service.payment.create(ctx.model.PaymentOrder, objOrder);
@@ -177,7 +208,7 @@ class DoraController extends Controller {
 
             retBody.order_number = company_order_no;
 
-            this.logger.info("dora.generateOrders生成订单", urlPayOrder);
+            this.logger.info("[dora.generateOrders]生成订单", urlPayOrder);
         } else {
             retBody.code = 1002;
             retBody.message = "error, db创建订单失败!";
@@ -246,6 +277,33 @@ class DoraController extends Controller {
         let company_id = this.config.w100Payment.client.dora.company_id;
         let api_version = this.config.w100Payment.client.dora.api_version;
 
+        let redis = this.ctx.app.redis;
+        let logdb = this.ctx.model.MessageLogs;
+
+        //lock user
+        if (await redis.setnx(this.getLockKey(this.ctx.arg.company_order_no), "1") == 0) {
+            app.logger.error("[dora.callback] lock error", this.ctx.arg.company_order_no);
+            await logdb.create({
+                create_time: moment(new Date().getTime()).format('YYYY-MM-DD HH:mm:ss'),
+                message_type: "exception",
+                uid: 0,
+                key: "",
+                info: "[dora]回调失败，因为订单被锁, 订单id为" + this.ctx.arg.company_order_no,
+                send_flag: false,
+            });
+            ctx.body = {
+                "status": 200,
+                "error_msg": "订单异常，被锁。", //status 非0时，才可以带返回信息
+                "company_order_no": this.ctx.arg.company_order_no,
+                "trade_no": this.ctx.arg.trade_no,
+            };
+
+            ctx.helper.end("callback");
+
+            return;
+        }
+
+        //return;
         //1、根据订单查订单记录
         let objQuery = {
             order_number: this.ctx.arg.company_order_no,
@@ -259,8 +317,11 @@ class DoraController extends Controller {
                 "company_order_no": this.ctx.arg.company_order_no,
                 "trade_no": this.ctx.arg.trade_no,
             };
-            this.logger.error("没找到订单", this.ctx.arg.company_order_no, this.ctx.arg.trade_no, this.ctx.arg.actual_amount, this.ctx.arg.sign, callback_ip)
+            this.logger.error("[dora.callback]没找到订单", this.ctx.arg.company_order_no, this.ctx.arg.trade_no, this.ctx.arg.actual_amount, this.ctx.arg.sign, callback_ip)
             ctx.helper.end("callback");
+
+            await redis.del(this.getLockKey(this.ctx.arg.company_order_no));
+
             return;
         }
 
@@ -272,12 +333,27 @@ class DoraController extends Controller {
                 "company_order_no": this.ctx.arg.company_order_no,
                 "trade_no": this.ctx.arg.trade_no,
             };
-            ctx.set('show-response-time', "xxxx");
-            //ctx.set('Content-Type', 'application/json');
-            ctx.set("charset", "UTF-8");
+            // ctx.set('show-response-time', "xxxx");
+            // ctx.set('Content-Type', 'application/json');
+            // ctx.set("charset", "UTF-8");
 
-            this.logger.error("找到订单重复被通知", this.ctx.arg.company_order_no, this.ctx.arg.trade_no, this.ctx.arg.actual_amount, this.ctx.arg.sign, retQuery[0].order_status, callback_ip);
+            this.logger.error("[dora.callback]找到订单重复被通知", this.ctx.arg.company_order_no, this.ctx.arg.trade_no, this.ctx.arg.actual_amount, this.ctx.arg.sign, retQuery[0].order_status, callback_ip);
             ctx.helper.end("callback");
+            await redis.del(this.getLockKey(this.ctx.arg.company_order_no));
+            return;
+        }
+
+        //amount_money校验
+        if(true==isNaN(this.ctx.arg.actual_amount) || true==isNaN(this.ctx.arg.original_amount) ){
+            ctx.body = {
+                "status": 206,
+                "error_msg": "订单金额参数异常", //status 非0时，才可以带返回信息
+                "company_order_no": this.ctx.arg.company_order_no,
+                "trade_no": this.ctx.arg.trade_no,
+            };
+            this.logger.error("[dora.callback]订单金额参数异常", this.ctx.arg.company_order_no, this.ctx.arg.trade_no, this.ctx.arg.actual_amount, this.ctx.arg.sign, this.ctx.arg.original_amount, retQuery[0].amount, callback_ip);
+            ctx.helper.end("callback");
+            await redis.del(this.getLockKey(this.ctx.arg.company_order_no));
             return;
         }
 
@@ -289,8 +365,9 @@ class DoraController extends Controller {
                 "company_order_no": this.ctx.arg.company_order_no,
                 "trade_no": this.ctx.arg.trade_no,
             };
-            this.logger.error("订单金额异常", this.ctx.arg.company_order_no, this.ctx.arg.trade_no, this.ctx.arg.actual_amount, this.ctx.arg.sign, this.ctx.arg.original_amount, retQuery[0].amount, callback_ip);
+            this.logger.error("[dora.callback]订单金额异常", this.ctx.arg.company_order_no, this.ctx.arg.trade_no, this.ctx.arg.actual_amount, this.ctx.arg.sign, this.ctx.arg.original_amount, retQuery[0].amount, callback_ip);
             ctx.helper.end("callback");
+            await redis.del(this.getLockKey(this.ctx.arg.company_order_no));
             return;
         }
 
@@ -303,10 +380,11 @@ class DoraController extends Controller {
                 "trade_no": this.ctx.arg.trade_no,
             };
             ctx.helper.end("callback");
+            await redis.del(this.getLockKey(this.ctx.arg.company_order_no));
             return;
         }
 
-        //转换成美元 toFixed(2) 需要截取精度吗 
+        //转换成美元 toFixed(2) 需要截取精度吗 -->不可以用toFixed
         let actual_amount_usd = this.ctx.arg.actual_amount / retQuery[0].exchange_rate;
 
         let order_status = OrderStatus["Arrived"];
@@ -330,6 +408,8 @@ class DoraController extends Controller {
                 "company_order_no": this.ctx.arg.company_order_no,
                 "trade_no": this.ctx.arg.trade_no,
             };
+            await redis.del(this.getLockKey(this.ctx.arg.company_order_no));
+            ctx.helper.end("callback");
             return;
         }
 
@@ -347,13 +427,17 @@ class DoraController extends Controller {
             _id: retQuery[0]._id,
             order_status: OrderStatus["notArrived"],
         };
-
+        //更新是否带锁
         let retUpdate = await this.ctx.service.payment.update(ctx.model.PaymentOrder, _json_condition /*retQuery[0]._id*/ , jsonUpdate);
         //n nModified ok
         if (1 == retUpdate.nModified && 1 == retUpdate.ok) {
+            this.logger.error("[dora.callback]给账户增加资产,begin", retQuery[0].uid, this.ctx.arg.company_order_no, this.ctx.arg.trade_no, this.ctx.arg.actual_amount, this.ctx.arg.sign, this.ctx.arg.original_amount, retQuery[0].amount, actual_amount_usd);
+
             //通知python给用户增加资产
-            let retWeex = await this.ctx.service.payment.addZiChan(retQuery[0].uid, actual_amount_usd, "USD", "dora", this.ctx.arg.company_order_no, this.ctx.arg.trade_no);
-            console.log("-----", retWeex);
+            let retWeex = await this.ctx.service.payment.addZiChan(retQuery[0].uid, retQuery[0].payment_order_id, actual_amount_usd, "USD", "dora", this.ctx.arg.company_order_no, this.ctx.arg.trade_no);
+            if(0 != retWeex){
+                this.logger.error("[dora.callback]给账户增加资产,end,失败,需走人工核实", retQuery[0].uid, this.ctx.arg.company_order_no, this.ctx.arg.trade_no, this.ctx.arg.actual_amount, this.ctx.arg.sign, this.ctx.arg.original_amount, retQuery[0].amount, actual_amount_usd);
+            }
         } else {
             this.logger.error("[dora.callback]修改订单状态异常", retUpdate.n, retUpdate.ok, retUpdate.nModified, this.ctx.arg.company_order_no, this.ctx.arg.trade_no, this.ctx.arg.actual_amount, this.ctx.arg.sign, this.ctx.arg.original_amount, retQuery[0].amount, actual_amount_usd);
 
@@ -364,6 +448,8 @@ class DoraController extends Controller {
                 "trade_no": this.ctx.arg.trade_no,
 
             };
+            await redis.del(this.getLockKey(this.ctx.arg.company_order_no));
+            ctx.helper.end("callback");
             return;
         }
 
@@ -374,6 +460,9 @@ class DoraController extends Controller {
             "trade_no": this.ctx.arg.trade_no,
             "status": 0
         }
+
+        await redis.del(this.getLockKey(this.ctx.arg.company_order_no));
+        ctx.helper.end("callback");
     }
 
 

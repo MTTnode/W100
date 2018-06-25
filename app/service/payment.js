@@ -83,26 +83,25 @@ class PaymentService extends Service {
 
     //加资产
     //用户ID  增加的资产金额  资产类型  充值平台来源    公司订单号  平台订单号
-    async addZiChan(_uid, _add_amount, _coin_type, _source, _company_order_no, _trade_no) {
+    async addZiChan(_uid, _payment_order_id, _add_amount, _coin_type, _source, _company_order_no, _trade_no) {
         const {
             ctx,
             service,
             app
         } = this;
         let config = this.config.w100Payment.client;
-        let redis = this.ctx.app.redis;
+        //let redis = this.ctx.app.redis;
         //生成weexid  需要此处用来计数吗？
-        let weexOrderId = await redis.incr(this.getPaymentOrderId());
+        //let weexOrderId = await redis.incr(this.getPaymentOrderId());
         //组建weex订单信息
         let weexParam = {
-            "balance_id": weexOrderId,
+            "balance_id": _payment_order_id, //weexOrderId,
             "user_id": _uid, //arg.morder_name,
             "amount": _add_amount, //arg.morder_price,
             "detail": {
                 "source": _source,
                 "scompany_order_no": _company_order_no,
                 "trade_no": _trade_no,
-                //w100_order_id: 456,//arg.morder_id
             },
             "business": "deposit",
             "coin_type": _coin_type, //"USD",
@@ -128,6 +127,8 @@ class PaymentService extends Service {
             return "核心返回异常";
         }
         app.logger.info("[payment.addZiChan] weex 返回", this.ctx.arg, weexParam, weexRes);
+
+        return 0;
     }
 
 
