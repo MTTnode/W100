@@ -21,6 +21,7 @@ module.exports = app => {
         order_ptime: { type: String },      //确认时间
         order_status: { type: String },     //订单状态
         amount: { type: String },           //订单金额
+        amount_usd:  { type: String },      //订单美元金额
         actual_amount: { type: String },    //实际到账
         actual_amount_usd: { type: String },    //实际到账人民币转美元
         order_fee: { type: String },        //费用

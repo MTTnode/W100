@@ -181,6 +181,7 @@ class DoraController extends Controller {
             //order_ptime: { type: String },      //确认时间
             order_status: OrderStatus["notArrived"], //订单状态 默认未到账
             amount: this.ctx.arg.amount, //订单金额
+            amount_usd: usd,    //订单美元金额
             //actual_amount: { type: String },    //实际到账
             //order_fee: { type: String },        //费用
             exchange_rate: rate.cash_sell_rate, //到账时汇率
@@ -510,6 +511,9 @@ class DoraController extends Controller {
 
         for (var i = 0; i < retOrders.length; i++) {
 
+            //显示时，截断入账显示
+            let usd = Math.floor(retOrders[i].actual_amount_usd*100) / 100;
+
             results.push({
                 create_time: retOrders[i].create_time,
                 order_number: retOrders[i].order_number,
@@ -520,8 +524,9 @@ class DoraController extends Controller {
 
                 order_status: retOrders[i].order_status,
                 amount: retOrders[i].amount,
+                amount_usd: retOrders[i].amount_usd,
                 actual_amount: retOrders[i].actual_amount,
-                actual_amount_usd: retOrders[i].actual_amount_usd,
+                actual_amount_usd: usd,
             });
         }
         
