@@ -511,6 +511,9 @@ class DoraController extends Controller {
 
         for (var i = 0; i < retOrders.length; i++) {
 
+            //显示时，截断入账显示
+            let usd = Math.floor(retOrders[i].actual_amount_usd*100) / 100;
+
             results.push({
                 create_time: retOrders[i].create_time,
                 order_number: retOrders[i].order_number,
@@ -523,7 +526,7 @@ class DoraController extends Controller {
                 amount: retOrders[i].amount,
                 amount_usd: retOrders[i].amount_usd,
                 actual_amount: retOrders[i].actual_amount,
-                actual_amount_usd: retOrders[i].actual_amount_usd,
+                actual_amount_usd: usd,
             });
         }
         
