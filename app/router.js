@@ -22,6 +22,7 @@ module.exports = app => {
   router.post('/w100/v1/payment/dora_callback', controller.v1.payment.dora.callback);//回调
   router.get('/w100/v1/payment/dora_orders_list', controller.v1.payment.dora.getOrdersList);//获取用户单列表
   router.get('/w100/v1/payment/getOrderList', controller.v1.payment.index.getOrderList);//获取订单状态
+  router.get('/w100/v1/payment/dora_trading_info', controller.v1.payment.dora.getTradingInfo);//获取充值手续费费率
   router.get('/w100/v1/client/update/check',  controller.v1.client.update.check.checkVer);//app版本检查
   router.post('/w100/v1/marketwarn/addMarketwarn', controller.v1.marketwarn.index.addMarketwarn);//新增预警
   router.post('/w100/v1/marketwarn/delMarketwarn', controller.v1.marketwarn.index.delMarketwarn);//删除预警
