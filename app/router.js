@@ -27,6 +27,14 @@ module.exports = app => {
   router.post('/w100/v1/marketwarn/delMarketwarn', controller.v1.marketwarn.index.delMarketwarn);//删除预警
   router.get('/w100/v1/marketwarn/getMarketwarn', controller.v1.marketwarn.index.getMarketwarn);//查看预警
   router.get('/w100/v1/marketwarn/getMarketwarnList', controller.v1.marketwarn.index.getMarketwarnList);//查看预警列表
+  //新增自选
+  router.post('/w100/v1/quot/addquot', controller.v1.aid.selQuot.addQuot);
+   //删除自选
+   router.post('/w100/v1/quot/delquot', controller.v1.aid.selQuot.delQuot);
+   //查看交易对是否在自选列表
+   router.get('/w100/v1/quot/isQuot', controller.v1.aid.selQuot.isQuot);
+   //查看自选信息
+   router.get('/w100/v1/quot/quotInfo', controller.v1.aid.selQuot.quotInfo);
 
   //////后台接口
   router.get('/ad/stat', controller.ad.statistics.index); //后台管理统计
