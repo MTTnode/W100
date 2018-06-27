@@ -100,12 +100,18 @@ module.exports = appInfo => {
         "url": "http://dora-elb-public-575851356.ap-northeast-1.elb.amazonaws.com/DoraCounterMobile/Deposit/Index",
         "charset":"UTF-8",
         "api_version": "1.5",
-        "amount_min":20.00,
-        "amount_max":5000.00
+        amount:{
+          "amount_min":20.00,
+          "amount_max":5000.00,
+        },
+        fees: {
+          "fees_pc": "1.9",
+          "fees_mobile": "2.0",
+        }
       }
     }
   };
-
+9
   return config;
 };
 

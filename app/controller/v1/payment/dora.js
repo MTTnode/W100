@@ -93,8 +93,8 @@ class DoraController extends Controller {
         let charset = this.config.w100Payment.client.dora.charset;
         let api_version = this.config.w100Payment.client.dora.api_version;
         //单笔充值的最大最小额度
-        let amount_min = this.config.w100Payment.client.dora.amount_min;
-        let amount_max = this.config.w100Payment.client.dora.amount_max;
+        let amount_min = this.config.w100Payment.client.dora.amount.amount_min;
+        let amount_max = this.config.w100Payment.client.dora.amount.amount_max;
         // let app_id = "app_id_weex"; //Y
         // let _format = "app_id_weex"; //Y
 
@@ -157,7 +157,25 @@ class DoraController extends Controller {
             return;
         }
 
-        let usd = Math.floor((amount_money / rate.cash_sell_rate)*100) / 100;
+        //手续费
+        let amount_free = this.config.w100Payment.client.dora.fees.fees_pc;
+        if('web' != this.ctx.arg.source){
+            amount_free = this.config.w100Payment.client.dora.fees.fees_mobile;
+        }
+
+        //有效性加粗略的判断
+        if(amount_free>100 || amount_free<0){
+            retBody.code = 1005;
+            retBody.message = "error, 手续费费率异常!";
+            ctx.body = retBody;
+            ctx.helper.end("generateOrders");
+
+            this.logger.error("[dora.generateOrders]手续费费率异常");
+            return;
+        }
+
+        //扣除费率后的usd
+        let usd = Math.floor(((amount_money*(100-amount_free)/100) / rate.cash_sell_rate)*100) / 100;
         
 
         retBody.cash_sell_rate = rate.cash_sell_rate;
@@ -187,6 +205,7 @@ class DoraController extends Controller {
             exchange_rate: rate.cash_sell_rate, //到账时汇率
             client_ip: client_ip, //客户请求生成订单时的IP
             payment_order_id: nOrderId, //唯一的订单号
+            amount_free: amount_free,   //下单时的交易费率
         };
 
         let obj = await this.ctx.service.payment.create(ctx.model.PaymentOrder, objOrder);
@@ -209,7 +228,7 @@ class DoraController extends Controller {
 
             retBody.order_number = company_order_no;
 
-            this.logger.info("[dora.generateOrders]生成订单", urlPayOrder);
+            this.logger.info("[dora.generateOrders]生成订单", amount_free, urlPayOrder);
         } else {
             retBody.code = 1002;
             retBody.message = "error, db创建订单失败!";
@@ -386,7 +405,7 @@ class DoraController extends Controller {
         }
 
         //转换成美元 toFixed(2) 需要截取精度吗 -->不可以用toFixed
-        let actual_amount_usd = this.ctx.arg.actual_amount / retQuery[0].exchange_rate;
+        let actual_amount_usd = (this.ctx.arg.actual_amount*(100-retQuery[0].amount_free)/100 )/ retQuery[0].exchange_rate;
 
         let order_status = OrderStatus["Arrived"];
         if ((retQuery[0].amount - this.ctx.arg.actual_amount) > 0) {
@@ -527,6 +546,7 @@ class DoraController extends Controller {
                 amount_usd: retOrders[i].amount_usd,
                 actual_amount: retOrders[i].actual_amount,
                 actual_amount_usd: usd,
+                amount_free: retOrders[i].amount_free,
             });
         }
         
@@ -539,6 +559,79 @@ class DoraController extends Controller {
         ctx.helper.end("getOrdersList");
     }
 
+    /**
+     * 查询手续费费率
+     */
+    async getTradingInfo() {
+        const {
+            ctx,
+            service,
+            app
+        } = this;
+        ctx.helper.pre("getTradingInfo", {
+            //header
+            ver: {
+                type: 'string'
+            },
+            source: {
+                type: 'string'
+            },
+            uid: {
+                type: 'string'
+            },
+            token: {
+                type: 'string'
+            },
+        });
+
+        let rate = app.weexHttps.getRate();
+        let cash_sell_rate = null;
+        if(rate){
+            cash_sell_rate = rate.cash_sell_rate;
+        }
+
+        if(!rate){
+            ctx.body = {
+                code: 1001,
+                data: {},
+                message: "汇率获取失败",
+            };;
+            ctx.helper.end("getTradingInfo");
+            return;
+        }
+
+
+        let fees = this.config.w100Payment.client.dora.fees;
+        let amount = this.config.w100Payment.client.dora.amount;
+        
+
+        if(!fees || !amount){
+            ctx.body = {
+                code: 1002,
+                data: {},
+                message: "配置文件异常",
+            };;
+            ctx.helper.end("getTradingInfo");
+            return;
+        }
+
+        let jsonInfo = {
+            "fees" : fees,
+            "amount": amount,
+            "rate": cash_sell_rate
+        }
+
+
+        ctx.body = {
+            code: 1000,
+            data: jsonInfo,
+            message: "OK",
+        };
+
+  
+
+        ctx.helper.end("getOrdersList");
+    }
 }
 
 

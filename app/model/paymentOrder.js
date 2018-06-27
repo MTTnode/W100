@@ -31,6 +31,7 @@ module.exports = app => {
         client_ip: { type: String },        //客户请求生成订单时的IP
         callback_ip: { type: String },      //平台确认到账通知的IP
         payment_order_id: { type: Number }, //自己生成的唯一订单号
+        amount_free: { type: String },   //下单时的交易费率
     });
 
 
