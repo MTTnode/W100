@@ -28,6 +28,12 @@ class selQuotController extends Controller {
           }else if(ctx.arg.type == "del"){
             res = await ctx.service.quot.delQuot();
             ctx.helper.end("delQuot");
+          }else{
+            res = {
+              code: -1,
+              data: null,
+              massage: "操作错误"
+            };
           }
           ctx.body = res;
         }
