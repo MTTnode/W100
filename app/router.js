@@ -31,7 +31,7 @@ module.exports = app => {
   //新增自选
   router.post('/w100/v1/quot/addquot', controller.v1.aid.selQuot.addQuot);
    //删除自选
-   router.post('/w100/v1/quot/delquot', controller.v1.aid.selQuot.delQuot);
+  //  router.post('/w100/v1/quot/delquot', controller.v1.aid.selQuot.delQuot);
    //查看交易对是否在自选列表
    router.get('/w100/v1/quot/isQuot', controller.v1.aid.selQuot.isQuot);
    //查看自选信息

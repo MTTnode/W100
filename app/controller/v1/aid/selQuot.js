@@ -25,7 +25,7 @@ class selQuotController extends Controller {
           if(ctx.arg.type == "add"){
             res = await ctx.service.quot.addQuot();
             ctx.helper.end("addQuot");
-          }else{
+          }else if(ctx.arg.type == "del"){
             res = await ctx.service.quot.delQuot();
             ctx.helper.end("delQuot");
           }

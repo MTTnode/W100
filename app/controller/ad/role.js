@@ -37,7 +37,7 @@ class RoleController extends Controller {
       name: { type: 'string' },
       role: { type: 'number' }
     });
-    console.log(typeof ctx.request.body.role);
+    
     let params = ctx.request.body || {};
     let res = await service.role.addUser(params);
     ctx.body = {
