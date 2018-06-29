@@ -540,7 +540,8 @@ class DoraController extends Controller {
             if(undefined != retOrders[i].actual_amount && null!=retOrders[i].actual_amount){
                 actual_amount = retOrders[i].actual_amount;
             }
-
+            usd = ""+usd;
+            actual_amount = ""+actual_amount;
 
             results.push({
                 create_time: retOrders[i].create_time,
