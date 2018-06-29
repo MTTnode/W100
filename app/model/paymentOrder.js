@@ -6,10 +6,9 @@ module.exports = app => {
     const PaymentOrderSchema = new Schema({
         create_time: { type: Number },  //订单创建时间
         uid: { type: String },      //用户ID
-        platform: { type: String },      //支付平台
+        platform: { type: String },      //支付平台 dora  blc
         
         /////////////////
-        //支付平台  1、dora
         //支付方式  1、支付宝  2、微信  3、快捷  4、转账  
         bank_name: { type: String },    //支付宝、微信 平安银行
         card_no: { type: String },      //支付宝、微信 平安银行  账号/卡号
@@ -31,7 +30,8 @@ module.exports = app => {
         client_ip: { type: String },        //客户请求生成订单时的IP
         callback_ip: { type: String },      //平台确认到账通知的IP
         payment_order_id: { type: Number }, //自己生成的唯一订单号
-        amount_free: { type: String },   //下单时的交易费率
+        amount_fee: { type: String },   //下单时的交易费率
+        platform_order_return: { type: String },   //去平台下单时，返回的订单信息
     });
 
 
