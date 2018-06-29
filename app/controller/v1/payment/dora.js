@@ -158,13 +158,13 @@ class DoraController extends Controller {
         }
 
         //手续费
-        let amount_free = this.config.w100Payment.client.dora.fees.fees_pc;
+        let amount_fee = this.config.w100Payment.client.dora.fees.fees_pc;
         if('web' != this.ctx.arg.source){
-            amount_free = this.config.w100Payment.client.dora.fees.fees_mobile;
+            amount_fee = this.config.w100Payment.client.dora.fees.fees_mobile;
         }
 
         //有效性加粗略的判断
-        if(amount_free>100 || amount_free<0){
+        if(amount_fee>100 || amount_fee<0){
             retBody.code = 1005;
             retBody.message = "error, 手续费费率异常!";
             ctx.body = retBody;
@@ -175,7 +175,7 @@ class DoraController extends Controller {
         }
 
         //扣除费率后的usd
-        let usd = Math.floor(((amount_money*(100-amount_free)/100) / rate.cash_sell_rate)*100) / 100;
+        let usd = Math.floor(((amount_money*(100-amount_fee)/100) / rate.cash_sell_rate)*100) / 100;
         
 
         retBody.cash_sell_rate = rate.cash_sell_rate;
@@ -205,7 +205,7 @@ class DoraController extends Controller {
             exchange_rate: rate.cash_sell_rate, //到账时汇率
             client_ip: client_ip, //客户请求生成订单时的IP
             payment_order_id: nOrderId, //唯一的订单号
-            amount_free: amount_free,   //下单时的交易费率
+            amount_fee: amount_fee,   //下单时的交易费率
         };
 
         let obj = await this.ctx.service.payment.create(ctx.model.PaymentOrder, objOrder);
@@ -228,7 +228,7 @@ class DoraController extends Controller {
 
             retBody.order_number = company_order_no;
 
-            this.logger.info("[dora.generateOrders]生成订单", amount_free, urlPayOrder);
+            this.logger.info("[dora.generateOrders]生成订单", amount_fee, urlPayOrder);
         } else {
             retBody.code = 1002;
             retBody.message = "error, db创建订单失败!";
@@ -405,7 +405,7 @@ class DoraController extends Controller {
         }
 
         //转换成美元 toFixed(2) 需要截取精度吗 -->不可以用toFixed
-        let actual_amount_usd = (this.ctx.arg.actual_amount*(100-retQuery[0].amount_free)/100 )/ retQuery[0].exchange_rate;
+        let actual_amount_usd = (this.ctx.arg.actual_amount*(100-retQuery[0].amount_fee)/100 )/ retQuery[0].exchange_rate;
 
         let order_status = OrderStatus["Arrived"];
         if ((retQuery[0].amount - this.ctx.arg.actual_amount) > 0) {
@@ -531,7 +531,16 @@ class DoraController extends Controller {
         for (var i = 0; i < retOrders.length; i++) {
 
             //显示时，截断入账显示
-            let usd = Math.floor(retOrders[i].actual_amount_usd*100) / 100;
+            let usd = 0;
+            if(undefined != retOrders[i].actual_amount_usd && null!=retOrders[i].actual_amount_usd){
+                usd = Math.floor(retOrders[i].actual_amount_usd * 100) / 100;
+            }
+
+            let actual_amount = 0;
+            if(undefined != retOrders[i].actual_amount && null!=retOrders[i].actual_amount){
+                actual_amount = retOrders[i].actual_amount;
+            }
+
 
             results.push({
                 create_time: retOrders[i].create_time,
@@ -544,9 +553,9 @@ class DoraController extends Controller {
                 order_status: retOrders[i].order_status,
                 amount: retOrders[i].amount,
                 amount_usd: retOrders[i].amount_usd,
-                actual_amount: retOrders[i].actual_amount,
+                actual_amount: actual_amount,
                 actual_amount_usd: usd,
-                amount_free: retOrders[i].amount_free,
+                amount_fee: retOrders[i].amount_fee,
             });
         }
         
