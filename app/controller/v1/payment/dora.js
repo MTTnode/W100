@@ -16,6 +16,11 @@ let OrderStatus = {
     //"cancel_22": "22", //不完整的订单取消
     "exception": 222, //异常
 }
+const dora_time = {
+    start_time: '1:00:00', // 停业开始时间
+    end_time: '8:00:00',   // 停业结束时间
+};
+
 
 class DoraController extends Controller {
 
@@ -76,6 +81,22 @@ class DoraController extends Controller {
             order_number: "", //订单号
             urlpay: "", //充值订单URL
         };
+
+        //开放时间校验
+        let todays = new Date().toLocaleDateString() + ' ';
+        let start_ts = Date.parse(todays + dora_time.start_time);
+        let end_ts = Date.parse(todays + dora_time.end_time);
+        let now = Date.parse(new Date());
+        if (now >= start_ts && now < end_ts) {
+            retBody.code = 1008;
+            //retBody.message = "该时间段不支持支付宝充值："+dora_time.start_time + " - " + dora_time.end_time;
+            retBody.message = "凌晨1点至早上8点不支持支付宝充值";
+            ctx.body = retBody;
+            ctx.helper.end("generateOrders");
+            return;
+        }
+
+
 
         let redis = this.ctx.app.redis;
         //生成weexid  需要此处用来计数吗？
