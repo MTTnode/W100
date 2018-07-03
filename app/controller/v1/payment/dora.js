@@ -442,7 +442,7 @@ class DoraController extends Controller {
         let mySign = this.MD5("company_id=" + company_id + "&company_order_no=" + this.ctx.arg.company_order_no + "&trade_no=" + this.ctx.arg.trade_no + "&actual_amount=" + this.ctx.arg.actual_amount +
             "&api_version=" + api_version + api_key);
         if (mySign != this.ctx.arg.sign) {
-            this.logger.error("[dora.callback]消息签名不对", mySign, this.ctx.arg.sign, this.ctx.arg.company_order_no, this.ctx.arg.trade_no, callback_ip);
+            this.logger.error("[dora.callback]消息签名不对", this.ctx.arg.sign, this.ctx.arg.company_order_no, this.ctx.arg.trade_no, callback_ip);
             ctx.body = {
                 "status": 205,
                 "error_msg": "消息签名不对", //status 非0时，才可以带返回信息
