@@ -31,10 +31,18 @@ class IndexController extends Controller {
             fall: []
         };
         for (var i = 0; i < d.length; i++) {
+            let item = {
+                last: d[i].last + "",
+                market:d[i].market,
+                open:d[i].open + "",
+                priceChange: d[i].priceChange,
+                priceChangePercent: d[i].priceChangePercent
+            };
+            
             if (d[i].priceChangePercent.indexOf("-") < 0) {
-                res.rise.push(d[i]);
+                res.rise.push(item);
             } else {
-                res.fall.push(d[i]);
+                res.fall.push(item);
             }
 
         }
