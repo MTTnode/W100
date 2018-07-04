@@ -6,6 +6,7 @@ module.exports = app => {
     name: { type: String },
     password: { type: String },
     role: { type: Number },  //0,管理员  1，普通用户
+    isLogin: { type: Number },  //0,未登录  1，登陆过
     create_time: { type: Date, default: Date.now }
   });
 

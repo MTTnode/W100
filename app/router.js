@@ -58,6 +58,7 @@ module.exports = app => {
   router.post('/ad/role/addUser',  controller.ad.role.addUser);//添加后台用户
   router.post('/ad/role/delUser',  controller.ad.role.delUser);//删除后台用户
   router.post('/ad/role/usrLogin',  controller.ad.role.usrLogin);//后台用户登陆
+  router.post('/ad/role/resetUser',  controller.ad.role.resetUser);//后台用户重置
   router.get('/ad/order/payment_orderList',  controller.ad.paymentorder.orderList);//获取dora支付的列表
 
   router.get('*', async (ctx, next) => {
