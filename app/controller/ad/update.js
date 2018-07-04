@@ -19,7 +19,7 @@ class UpdateController extends Controller {
         version: { type: 'string' },
         update_status: { type: 'string' },
         client: { type: 'string' },
-        remark: { type: 'string' },
+        remark: { type: 'string' }
       });
       let params = ctx.request.body || {};
       ctx.body = await service.update.addVaersion(params);

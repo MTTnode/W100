@@ -111,7 +111,6 @@ module.exports = appInfo => {
       }
     }
   };
-9
   return config;
 };
 
