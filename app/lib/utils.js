@@ -7,7 +7,7 @@
  */
 
 var utils = {
-  regEmail: /^[a-zA-Z0-9]+([._\\-]*[a-zA-Z0-9])*@(bada-soft.com|mingtaotek.com)+$/,
+  regEmail: /^[a-zA-Z0-9]+([._\\-]*[a-zA-Z0-9])*@(bada-soft.com|mingtaotek.com|mail.weex.com)+$/,
 }
 
  module.exports = utils;
