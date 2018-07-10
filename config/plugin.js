@@ -76,6 +76,12 @@ exports.weexHttps = {
     // path: path.join(__dirname, '../lib/plugin/egg-weex-https'),
 };
 
+exports.weexToken = {
+  enable: true,
+  package: 'egg-weex-token',
+  // path: path.join(__dirname, '../lib/plugin/egg-weex-token'),
+};
+
 //egg-logrotator
 exports.logrotator = {
   enable: true,

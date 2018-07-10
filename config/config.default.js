@@ -23,6 +23,14 @@ module.exports = appInfo => {
       // url: "https://www.bithe.com/"
     }
   };
+  
+  //token检查
+  config.weexToken = {
+    client: {
+      url: "http://wwwapp.weex.com:8000/"
+      // url: "https://www.bithe.com/"
+    }
+  };
 
   config.weexWs = {
     client: {

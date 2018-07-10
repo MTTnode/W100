@@ -72,6 +72,17 @@ class DoraController extends Controller {
             },
         });
 
+        //token 检验 tim 2018/07/10
+        let userToken = await app.weexToken.getUserToken(this, ctx.arg.token, ctx.arg.uid);
+        if(!userToken.data.available){
+          ctx.helper.end("generateOrders");
+          return ctx.body = {
+            code: -1,
+            data: null,
+            message: "请重新登陆",
+          };
+        }
+
         let retBody = {
             code: 1000,
             message: "OK",
