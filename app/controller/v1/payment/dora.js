@@ -1006,11 +1006,65 @@ class DoraController extends Controller {
         });
 
 
+        //1、根据用户id查询订单记录
+        let objQuery = {
+            uid: this.ctx.arg.uid,
+            platform: "dora",
+        };
+
+        let jsonSort = {
+            create_time: -1
+        };
+
+        let nLimit = 50;
+
+        let retOrders = await this.ctx.service.payment.queryList(ctx.model.PaymentWithdraw, objQuery, jsonSort, nLimit);
+
+        let results = [];
+
+        for (var i = 0; i < retOrders.length; i++) {
+
+            //显示时，截断入账显示
+            let actual_amount = retOrders[i].actual_amount;
+            if (null == actual_amount || undefined == actual_amount) {
+                actual_amount = 0;
+            }
+
+            results.push({
+                //渠道
+                //channel: retOrders[i].channel,
+                //平台
+                platform: retOrders[i].channel,
+                //扣除手续费后的法币金额
+                amount: retOrders[i].amount,
+                //请求提现的USD金额（未扣除手续费）
+                amount_usd: retOrders[i].amount_usd,
+                //实际到账金额，根据订单状态，可能0
+                actual_amount: actual_amount,
+                //手续费用
+                amount_fee: retOrders[i].amount_fee,
+
+                //收款的卡号
+                card_no: retOrders[i].card_no,
+                //收款的卡对应的名字
+                card_name: retOrders[i].card_name,
+
+                //订单号
+                order_number: retOrders[i].order_number,
+                //订单状态
+                order_status: retOrders[i].order_status,
+                //订单创建时间
+                create_time: retOrders[i].create_time,
+                //订单确认时间
+                order_ptime: retOrders[i].order_ptime,
+
+            });
+        }
 
         ctx.body = {
             code: 1000,
-            data: {},
-            message: "OK",
+            data: results,
+            message: results == null ? "error" : "OK",
         };
 
         ctx.helper.end("withdrawList");
@@ -1244,13 +1298,13 @@ class DoraController extends Controller {
         } else if (3 == type) {
             //结果确认
             let actual_amount = json_content.actual_amount;
-            let status = json_content.status;   //0: 提现成功  1：提现失败
+            let status = json_content.status; //0: 提现成功  1：提现失败
             let apply_time = json_content.apply_time;
             let operating_time = json_content.operating_time;
             let api_version = json_content.api_version;
 
 
-            let mySign = this.MD5("company_id="+ company_id+"&company_order_no ="+company_order_no+"&player_id="+player_id+"&actual_amount ="+ actual_amount +"&apply_time"+ apply_time +"&operating_time"+ operating_time+"&api_version"+ api_version +api_key)
+            let mySign = this.MD5("company_id=" + company_id + "&company_order_no =" + company_order_no + "&player_id=" + player_id + "&actual_amount =" + actual_amount + "&apply_time" + apply_time + "&operating_time" + operating_time + "&api_version" + api_version + api_key)
             console.log("[dora.callback_withdraw]消息签名:", mySign);
 
             //签名校验
@@ -1284,12 +1338,11 @@ class DoraController extends Controller {
 
             let order_status = WithdrawStatus["arrived"];
 
-            if(0 != status){
+            if (0 != status) {
                 //回调通知，支付失败
                 order_status = WithdrawStatus["payment_fail"];
                 this.logger.info("[dora.callback_withdraw]订单金额,提现支付失败", company_order_no, trade_no, actual_amount, this.ctx.arg.sign, retQuery[0].amount, retQuery[0].amount_usd, callback_ip);
-            }
-            else if ((retQuery[0].amount - actual_amount) > 0) {
+            } else if ((retQuery[0].amount - actual_amount) > 0) {
                 order_status = WithdrawStatus["partial_payment"]; //部分支付
                 this.logger.info("[dora.callback_withdraw]订单金额,提现部分到账", company_order_no, trade_no, actual_amount, this.ctx.arg.sign, retQuery[0].amount, retQuery[0].amount_usd, callback_ip);
             } else {
@@ -1311,7 +1364,7 @@ class DoraController extends Controller {
                 order_status: WithdrawStatus["wait_for_payment"],
             };
             //更新是否带锁
-            let retUpdate = await this.ctx.service.payment.update(ctx.model.PaymentWithdraw, _json_condition , jsonUpdate);
+            let retUpdate = await this.ctx.service.payment.update(ctx.model.PaymentWithdraw, _json_condition, jsonUpdate);
             if (1 == retUpdate.nModified && 1 == retUpdate.ok) {
                 this.logger.info("[dora.callback_withdraw]提现全部到账,订单状态更新成功", company_order_no, trade_no, actual_amount, this.ctx.arg.sign, retQuery[0].amount, retQuery[0].amount_usd, callback_ip);
                 ctx.body = {
