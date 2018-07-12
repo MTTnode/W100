@@ -774,8 +774,8 @@ class DoraController extends Controller {
         let charset = this.config.w100Payment.client.dora.charset;
         let api_version = this.config.w100Payment.client.dora.api_version;
         //单笔提现的最大最小额度
-        let amount_min = this.config.w100Payment.client.dora.amount.amount_min;
-        let amount_max = this.config.w100Payment.client.dora.amount.amount_max;
+        let amount_min = 0;//this.config.w100Payment.client.dora.amount.amount_min;
+        let amount_max = 100;//this.config.w100Payment.client.dora.amount.amount_max;
         // let app_id = "app_id_weex"; //Y
         // let _format = "app_id_weex"; //Y
 
