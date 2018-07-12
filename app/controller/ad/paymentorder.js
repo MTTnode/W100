@@ -32,52 +32,48 @@ class PaymentOrderController extends Controller {
         '$gte': date1
       };
     }
+
+    //默认dora支付
+    param.platform = 'dora';
     let data = await ctx.model.PaymentOrder.find(param).sort({
       create_time: -1
     });
     let res = {};
-    res.list = data;
-    /*
+    let list = [];
+
     res.total = data.length;
     let total_price = 0;  //总价
     let account_paid = 0; //支付完成
-    let revoke = 0; //主动撤销
-    let revoke1 = 0;  //被动撤销
     let unpaid = 0; //未支付
-    let partpaid = 0; //部分支付
-    let confirmedpaid = 0; // 足额待确认
 
-    data.forEach(element => {
-      if(element.price){
-        total_price += parseInt(element.price);
+    data.forEach((element, index) => {
+      let obj = {};
+      obj.create_time = element.create_time;
+      obj.uid = element.uid;
+      obj.order_status = element.order_status;
+      obj.amount = element.amount;
+      obj.order_number = element.order_number;
+      obj.exchange_rate = element.exchange_rate;
+      if(element.amount){
+        total_price += parseInt(element.amount);
       }
-      if(element.order_status && element.order_status == 10){
-        account_paid += parseInt(element.price);
+      if(element.actual_amount){
+        obj.actual_amount = element.actual_amount;
+        obj.poundage = ((parseFloat(element.actual_amount)*parseFloat(element.amount_fee))/100).toFixed(4);
       }
-      if(element.order_status && element.order_status == 20){
-        revoke += parseInt(element.price);
+      if(element.actual_amount_usd){
+        obj.actual_amount_usd = parseFloat(element.actual_amount_usd).toFixed(4);
       }
-      if(element.order_status && element.order_status == 21){
-        revoke1 += parseInt(element.price);
+      if(element.order_status == 10 || element.order_status == 2){
+        account_paid += parseFloat(element.actual_amount);
       }
-      if(element.order_status && element.order_status == 1){
-        unpaid += parseInt(element.price);
-      }
-      if(element.order_status && element.order_status == 2){
-        partpaid += parseFloat(element.coin_cfmed);
-      }
-      if(element.order_status && element.order_status == 3){
-        confirmedpaid += parseFloat(element.price);
-      }
+      list.push(obj);
     });
+    res.list = list;
     res.price = total_price;
     res.account_paid = account_paid;
-    res.revoke = revoke;
-    res.revoke1 = revoke1;
-    res.unpaid = unpaid;
-    res.partpaid = partpaid;
-    res.confirmedpaid = confirmedpaid;
-    */
+    res.unpaid = parseFloat(total_price)-parseFloat(account_paid);
+
     ctx.body = {
       code: 0,
       message: 'OK',
