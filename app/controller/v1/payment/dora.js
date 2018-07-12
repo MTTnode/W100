@@ -953,7 +953,7 @@ class DoraController extends Controller {
             retBody.message = "error, db创建提现订单失败!";
             this.logger.error("[dora.withdraw]生成订单失败,需要归还已扣金额", this.ctx.arg.amount_usd, player_id, company_order_no);
         }
-
+        /*
         //测试代码
         const result = await ctx.curl(urlBase, {
             // method is required
@@ -973,7 +973,7 @@ class DoraController extends Controller {
 
         let jsonRet = result.data;
 
-
+        */
 
 
         ctx.body = retBody;
