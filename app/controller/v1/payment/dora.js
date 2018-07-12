@@ -238,6 +238,7 @@ class DoraController extends Controller {
             client_ip: client_ip, //客户请求生成订单时的IP
             payment_order_id: nOrderId, //唯一的订单号
             amount_fee: amount_fee,   //下单时的交易费率
+            source: this.ctx.arg.source,    //PC Android IOS  
         };
 
         let obj = await this.ctx.service.payment.create(ctx.model.PaymentOrder, objOrder);

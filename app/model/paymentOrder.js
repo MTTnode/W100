@@ -32,6 +32,7 @@ module.exports = app => {
         payment_order_id: { type: Number }, //自己生成的唯一订单号
         amount_fee: { type: String },   //下单时的交易费率
         platform_order_return: { type: String },   //去平台下单时，返回的订单信息
+        source: { type: String },    //PC Android IOS  
     });
 
 
