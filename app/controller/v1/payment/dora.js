@@ -1307,7 +1307,7 @@ class DoraController extends Controller {
             let api_version = json_content.api_version;
 
 
-            let mySign = this.MD5("company_id=" + company_id + "&company_order_no=" + company_order_no + "&player_id=" + player_id + "&actual_amount=" + actual_amount + "&apply_time" + apply_time + "&operating_time" + operating_time + "&api_version" + api_version + api_key)
+            let mySign = this.MD5("company_id=" + company_id + "&company_order_no=" + company_order_no + "&player_id=" + player_id + "&actual_amount=" + actual_amount + "&apply_time=" + apply_time + "&operating_time=" + operating_time + "&api_version=" + api_version + api_key)
             console.log("[dora.callback_withdraw]消息签名:", mySign);
 
             //签名校验
