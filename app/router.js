@@ -23,6 +23,7 @@ module.exports = app => {
   router.get('/w100/v1/payment/dora_orders_list', controller.v1.payment.dora.getOrdersList);//获取用户单列表
   router.post('/w100/v1/payment/dora/withdraw', controller.v1.payment.dora.withdraw);//用户请求提现
   router.get('/w100/v1/payment/dora/withdraw_list', controller.v1.payment.dora.withdrawList);//用户请求提现列表
+  router.get('/w100/v1/payment/dora/callback_withdraw', controller.v1.payment.dora.callback_withdraw);//平台回调确认和通知
   router.post('/w100/v1/payment/dora/callback_withdraw', controller.v1.payment.dora.callback_withdraw);//平台回调确认和通知
   router.post('/w100/v1/payment/dora/review_withdraw', controller.v1.payment.dora.review_withdraw);//Admin对提现订单的处理
 
