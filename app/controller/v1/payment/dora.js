@@ -1187,11 +1187,11 @@ class DoraController extends Controller {
             let channel_code = json_content.channel_code;
 
 
-            let mySign = this.MD5("company_id=" + company_id + "&company_order_no =" + company_order_no + "&player_id=" + player_id + "&amount_money =" + amount_money +
+            let mySign = this.MD5("company_id=" + company_id + "&company_order_no=" + company_order_no + "&player_id=" + player_id + "&amount_money=" + amount_money +
                 "&name=" + name + "&nick_name=" + nick_name + "&channel_code=" + channel_code + api_key);
 
             console.log("[dora.callback_withdraw]消息签名:", mySign);
-            let strMd5 = "company_id=" + company_id + "&company_order_no =" + company_order_no + "&player_id=" + player_id + "&amount_money =" + amount_money +
+            let strMd5 = "company_id=" + company_id + "&company_order_no=" + company_order_no + "&player_id=" + player_id + "&amount_money=" + amount_money +
             "&name=" + name + "&nick_name=" + nick_name + "&channel_code=" + channel_code + api_key;
             this.logger.info(strMd5, json_content);
 
@@ -1307,7 +1307,7 @@ class DoraController extends Controller {
             let api_version = json_content.api_version;
 
 
-            let mySign = this.MD5("company_id=" + company_id + "&company_order_no =" + company_order_no + "&player_id=" + player_id + "&actual_amount =" + actual_amount + "&apply_time" + apply_time + "&operating_time" + operating_time + "&api_version" + api_version + api_key)
+            let mySign = this.MD5("company_id=" + company_id + "&company_order_no=" + company_order_no + "&player_id=" + player_id + "&actual_amount=" + actual_amount + "&apply_time" + apply_time + "&operating_time" + operating_time + "&api_version" + api_version + api_key)
             console.log("[dora.callback_withdraw]消息签名:", mySign);
 
             //签名校验
