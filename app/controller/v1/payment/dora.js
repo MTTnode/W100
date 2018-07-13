@@ -1191,6 +1191,9 @@ class DoraController extends Controller {
                 "&name=" + name + "&nick_name=" + nick_name + "&channel_code=" + channel_code + api_key);
 
             console.log("[dora.callback_withdraw]消息签名:", mySign);
+            let strMd5 = "company_id=" + company_id + "&company_order_no =" + company_order_no + "&player_id=" + player_id + "&amount_money =" + amount_money +
+            "&name=" + name + "&nick_name=" + nick_name + "&channel_code=" + channel_code + api_key;
+            this.logger.info(strMd5, json_content);
 
             //签名校验
             if (mySign != this.ctx.arg.sign) {
@@ -1555,7 +1558,7 @@ class DoraController extends Controller {
         } else {
             console.log(result.data);
             //{ status: 0, code: -9999, msg: '商户可利用余额不足', data: null }
-            if (0 !== jsonRet.status || !jsonRet.data) {
+            if (200 !== jsonRet.status || !jsonRet.data) {
                 //error
                 this.logger.error("[dora.withdraw]生成订单失败,需要归还已扣金额,Dora返回下单请求报错", company_order_no, jsonRet);
             } else {
