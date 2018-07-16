@@ -28,7 +28,7 @@ let WithdrawStatus = {
     "wait_for_payment": "10", //等待支付-->成功下单
     "dora_req_withdraw_fail": "11", //请求dora下单提现，失败,请求消息失败
     "dora_return_withdraw_fail": "12", //请求dora下单，失败,返回数据显示失败，可能余额不足等原因
-    "request_error":"13", //请求异常
+    "request_error": "13", //请求异常
     "withdraw_confirm_type2": "14", //收到二次确认的回调
 
     //3:转账结果
@@ -36,6 +36,20 @@ let WithdrawStatus = {
     "partial_payment": "21", //部分支付完成
     "payment_fail": "22", //支付失败
 }
+//支持提现的银行列表
+let arr_banks_info = [
+    {
+        bank_id: 3,
+        bank_name: "招商银行",
+        abbreviation: "CMB"
+    },
+    {
+        bank_id: 4,
+        bank_name: "中国民生银行",
+        abbreviation: "CMBC"
+    },
+
+];
 
 
 const dora_time = {
@@ -694,6 +708,84 @@ class DoraController extends Controller {
         ctx.helper.end("getOrdersList");
     }
 
+
+    /**
+     * 查询提现费用、支持的银行、汇率等信息
+     */
+    async getWithdrawInfo() {
+        const {
+            ctx,
+            service,
+            app
+        } = this;
+        ctx.helper.pre("getWithdrawInfo", {
+            //header
+            ver: {
+                type: 'string'
+            },
+            source: {
+                type: 'string'
+            },
+            uid: {
+                type: 'string'
+            },
+            token: {
+                type: 'string'
+            },
+        });
+
+        let rate = app.weexHttps.getRate();
+        let cash_sell_rate = null;
+        if (rate) {
+            cash_sell_rate = rate.cash_sell_rate;
+        }
+
+        if (!rate) {
+            ctx.body = {
+                code: 1001,
+                data: {},
+                message: "汇率获取失败",
+            };;
+            ctx.helper.end("getWithdrawInfo");
+            return;
+        }
+
+
+        let fees = this.config.w100Payment.client.dora.fees;
+        let amount = this.config.w100Payment.client.dora.amount;
+
+
+        if (!fees || !amount) {
+            ctx.body = {
+                code: 1002,
+                data: {},
+                message: "配置文件异常",
+            };;
+            ctx.helper.end("getWithdrawInfo");
+            return;
+        }
+
+        let jsonInfo = {
+            "fees": fees.fees_withdraw_fixed_costs,
+            "amount": {
+                withdraw_min: amount.withdraw_min,
+                withdraw_max: amount.withdraw_max,
+            },
+            "rate": cash_sell_rate,
+            "banks": arr_banks_info,
+        }
+
+
+        ctx.body = {
+            code: 1000,
+            data: jsonInfo,
+            message: "OK",
+        };
+
+
+
+        ctx.helper.end("getWithdrawInfo");
+    }
     /**
      * 用户请求提现
      */
@@ -800,6 +892,9 @@ class DoraController extends Controller {
         let name = this.ctx.arg.card_name;
         //账户号
         let card_no = this.ctx.arg.card_no;
+        //银行名称
+        let bank_name = this.ctx.arg.bank_name;
+
         //请求方的IP地址
         let client_ip = this.ctx.ip;
 
@@ -823,6 +918,27 @@ class DoraController extends Controller {
         }
 
 
+
+        //银行编码：用户发起充值的银行，编码详情见附件5.2
+        let bankID = 0;
+        for (let i = 0; i < arr_banks_info.length; i++) {
+            if (bank_name == arr_banks_info[i].bank_name) {
+                bankID = arr_banks_info[i].bank_id;
+                break;
+            }
+        }
+
+        if (bankID <= 0) {
+            retBody.code = 1009;
+            retBody.message = "不支持应该银行卡转账: " + bank_name;
+            ctx.body = retBody;
+            ctx.helper.end("depositApply");
+            return;
+        }
+
+        bankID = ""+bankID;
+
+
         let nowTime = new Date();
         let _timestamp = dateFormat.asString('yyyyMMddhhmmss', nowTime);
         //生成订单号 20180615182727870-->可以考虑外加用户ID
@@ -843,7 +959,7 @@ class DoraController extends Controller {
         }
 
         //手续费 5块每笔，固定
-        let amount_fee = 5; //this.config.w100Payment.client.dora.fees.fees_pc;
+        let amount_fee = this.config.w100Payment.client.dora.fees.fees_withdraw_fixed_costs;
         retBody.amount_fee = amount_fee;
 
 
@@ -885,7 +1001,7 @@ class DoraController extends Controller {
             "nick_name": null,
             "card_no": this.ctx.arg.card_no,
             "qrcode_url": null,
-            "bank_addr": "3",
+            "bank_addr": bankID,
             "extra_param": null
         };
 
@@ -1474,7 +1590,7 @@ class DoraController extends Controller {
         if (1 != retQuery.length) {
             ctx.body = {
                 "code": 1002,
-                "message": "没找到订单信息", 
+                "message": "没找到订单信息",
                 "company_order_no": company_order_no,
             };
             this.logger.error("[dora.review_withdraw]没找到订单", company_order_no, admin_id, admin_ip)
@@ -1564,7 +1680,7 @@ class DoraController extends Controller {
 
                 ctx.body = {
                     "code": 1005,
-                    "message": "请求支付平台生成支付订单，失败！", 
+                    "message": "请求支付平台生成支付订单，失败！",
                     "company_order_no": company_order_no,
                 };
 
@@ -1591,7 +1707,7 @@ class DoraController extends Controller {
                         "message": "请求支付平台生成支付订单， 成功！--" + jsonRet.data.trade_no,
                         "company_order_no": company_order_no,
                     };
-        
+
                     /*
                     {
                         status: 200,
@@ -1619,7 +1735,7 @@ class DoraController extends Controller {
             }
         } catch (error) {
             jsonUpdate.order_status = WithdrawStatus["request_error"];
-            this.logger.error("[dora.review_withdraw]Dora提现请求异常,可能网络原因", company_order_no,error);
+            this.logger.error("[dora.review_withdraw]Dora提现请求异常,可能网络原因", company_order_no, error);
 
             ctx.body = {
                 "code": 1007,
@@ -1630,12 +1746,12 @@ class DoraController extends Controller {
         }
 
         //if(jsonUpdate.order_status != WithdrawStatus["wait_for_payment"]){
-            let _json_condition_2 = {
-                _id: retQuery[0]._id,
-                //order_status: WithdrawStatus["under_review"],
-            };
-            let retUpdate = await this.ctx.service.payment.update(ctx.model.PaymentWithdraw, _json_condition_2, jsonUpdate);
-        
+        let _json_condition_2 = {
+            _id: retQuery[0]._id,
+            //order_status: WithdrawStatus["under_review"],
+        };
+        let retUpdate = await this.ctx.service.payment.update(ctx.model.PaymentWithdraw, _json_condition_2, jsonUpdate);
+
         //}
 
         await redis.del(this.getLockKey(company_order_no));

@@ -94,21 +94,40 @@ module.exports = appInfo => {
         "merch_id": "10000",
         "merch_key": "ZDcyZTBlMDBiYjYyMTlmOTA0ZDhlODUxOTgxOTk0ZDY5YjBkYWMzZQ=="
       }, dora: {
-        "api_key":"49f38b1b8cfdd122ea151af32528129c",
-        "company_id":45,
+        "api_key":"86d69e833d14b8859cb81029b3bebaa7",
+        "company_id":54,
         "callbackurl": "https://wwwapp.weex.com:8443/w100/v1/payment/dora_callback",
-        "url": "http://dora-elb-public-575851356.ap-northeast-1.elb.amazonaws.com/DoraCounterMobile/Deposit/Index",
+        "url": "https://countermobile.xi33.net/DoraCounterMobile/Deposit/Index",
         "charset":"UTF-8",
         "api_version": "1.5",
         amount:{
           "amount_min":20.00,
           "amount_max":5000.00,
+          //提现
+          "withdraw_min":20.00,
+          "withdraw_max":5000.00,
         },
         fees: {
           "fees_pc": "1.9",
           "fees_mobile": "2.0",
-        }
-      }
+          "fees_withdraw_fixed_costs": "5", //提现：固定费用
+        },
+        "url_withdraw": "https://countermobile.xi33.net/DoraCounterMobile/api/counter/WithdrawalApplyAsync",
+        "callbackurl_withdraw": "https://wwwapp.weex.com:8443/w100/v1/payment/dora_callback",
+      }, blc: {
+       "keyConfig":"WX123456",
+       "merchantID":377,
+       "url_DepositApply": "https://blc.1oba.com/BLC_API/json/reply/DepositApply",
+       "webUrl":"wwwapp.weex.com",
+       amount:{
+         "amount_min":20.00,
+         "amount_max":500000.00,
+       },
+       fees: {
+         "fees_pc": "0",
+         "fees_mobile": "0",
+       }
+     }
     }
   };
 9

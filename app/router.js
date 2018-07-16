@@ -26,6 +26,7 @@ module.exports = app => {
   router.get('/w100/v1/payment/dora/callback_withdraw', controller.v1.payment.dora.callback_withdraw);//平台回调确认和通知
   router.post('/w100/v1/payment/dora/callback_withdraw', controller.v1.payment.dora.callback_withdraw);//平台回调确认和通知
   router.post('/w100/v1/payment/dora/review_withdraw', controller.v1.payment.dora.review_withdraw);//Admin对提现订单的处理
+  router.get('/w100/v1/payment/dora/withdraw_info', controller.v1.payment.dora.getWithdrawInfo);//获取提现的条件信息
 
   router.get('/w100/v1/payment/getOrderList', controller.v1.payment.index.getOrderList);//获取订单状态
   router.get('/w100/v1/payment/dora_trading_info', controller.v1.payment.dora.getTradingInfo);//获取充值手续费费率
