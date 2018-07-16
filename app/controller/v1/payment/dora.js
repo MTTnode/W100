@@ -24,9 +24,12 @@ let WithdrawStatus = {
     "review_failure": "2", //审核失败
 
     //2：通知平台转账
+    //"request_payment_order": "9", //请求下单-->因为网络原因可能失败
     "wait_for_payment": "10", //等待支付-->成功下单
     "dora_req_withdraw_fail": "11", //请求dora下单提现，失败,请求消息失败
     "dora_return_withdraw_fail": "12", //请求dora下单，失败,返回数据显示失败，可能余额不足等原因
+    "request_error":"13", //请求异常
+    "withdraw_confirm_type2": "14", //收到二次确认的回调
 
     //3:转账结果
     "arrived": "20", //支付完成
@@ -495,7 +498,7 @@ class DoraController extends Controller {
             order_status: OrderStatus["notArrived"],
         };
         //更新是否带锁
-        let retUpdate = await this.ctx.service.payment.update(ctx.model.PaymentOrder, _json_condition /*retQuery[0]._id*/ , jsonUpdate);
+        let retUpdate = await this.ctx.service.payment.update(ctx.model.PaymentOrder, _json_condition /*retQuery[0]._id*/, jsonUpdate);
         //n nModified ok
         if (1 == retUpdate.nModified && 1 == retUpdate.ok) {
             this.logger.error("[dora.callback]给账户增加资产,begin", retQuery[0].uid, this.ctx.arg.company_order_no, this.ctx.arg.trade_no, this.ctx.arg.actual_amount, this.ctx.arg.sign, this.ctx.arg.original_amount, retQuery[0].amount, actual_amount_usd);
@@ -1192,7 +1195,7 @@ class DoraController extends Controller {
 
             console.log("[dora.callback_withdraw]消息签名:", mySign);
             let strMd5 = "company_id=" + company_id + "&company_order_no=" + company_order_no + "&player_id=" + player_id + "&amount_money=" + amount_money +
-            "&name=" + name + "&nick_name=" + nick_name + "&channel_code=" + channel_code + api_key;
+                "&name=" + name + "&nick_name=" + nick_name + "&channel_code=" + channel_code + api_key;
             this.logger.info(strMd5, json_content);
 
             //签名校验
@@ -1445,15 +1448,15 @@ class DoraController extends Controller {
         let company_order_no = this.ctx.arg.order_number;
         let op_type = this.ctx.arg.op_type;
         let admin_id = this.ctx.arg.admin_id;
-
-        await redis.del(this.getLockKey(company_order_no));
+        //test
+        //await redis.del(this.getLockKey(company_order_no));
         //lock user
         if (await redis.setnx(this.getLockKey(company_order_no), "1") == 0) {
             app.logger.error("[dora.review_withdraw] lock error", company_order_no, admin_id, admin_ip);
 
             ctx.body = {
-                "status": 1001,
-                "error_msg": "订单异常，被锁。", //status 非0时，才可以带返回信息
+                code: 1001,
+                "message": "订单异常，被锁。",
                 "company_order_no": company_order_no,
 
             };
@@ -1470,8 +1473,8 @@ class DoraController extends Controller {
         let retQuery = await this.ctx.service.payment.query(ctx.model.PaymentWithdraw, objQuery);
         if (1 != retQuery.length) {
             ctx.body = {
-                "status": 1002,
-                "error_msg": "没找到订单信息", //status 非0时，才可以带返回信息
+                "code": 1002,
+                "message": "没找到订单信息", 
                 "company_order_no": company_order_no,
             };
             this.logger.error("[dora.review_withdraw]没找到订单", company_order_no, admin_id, admin_ip)
@@ -1485,8 +1488,8 @@ class DoraController extends Controller {
         //订单状态校验,正常情况这个时候应该是等待支付，因为已经完成了订单审核
         if (retQuery[0].order_status != WithdrawStatus["under_review"]) {
             ctx.body = {
-                "status": 1003,
-                "error_msg": "订单异常,状态不对", //status 非0时，才可以带返回信息
+                "code": 1003,
+                "message": "订单异常,状态不对",
                 "company_order_no": company_order_no,
             };
 
@@ -1497,7 +1500,8 @@ class DoraController extends Controller {
         }
 
         //判断操作类型
-        if (op_type) {;
+        if (op_type) {
+            ;
         }
 
         //更新订单状态
@@ -1516,8 +1520,8 @@ class DoraController extends Controller {
         //n nModified ok  1个被修改才是正常的
         if (1 != retUpdate.nModified || 1 != retUpdate.ok) {
             ctx.body = {
-                "status": 1004,
-                "error_msg": "修改订单异常", //status 非0时，才可以带返回信息
+                "code": 1004,
+                "message": "修改订单异常",
                 "company_order_no": company_order_no,
             };
 
@@ -1532,70 +1536,107 @@ class DoraController extends Controller {
         let postData = retQuery[0].order_post_data;
         let urlBase = this.config.w100Payment.client.dora.url_withdraw;
 
-        //需不需要提前到这，否则请求异常可能会到账无法解锁
+        //提前到这，否则请求异常可能会到账无法解锁
         //await redis.del(this.getLockKey(company_order_no));
+        let returnData = "";
+        try {
+            const result = await ctx.curl(urlBase, {
+                //timeout: [ 1000, 30000 ],
+                // method is required
+                method: 'POST',
+                // telling HttpClient to send data as JSON by contentType
+                contentType: 'json',
+                data: postData,
+                // telling HttpClient to process the return body as JSON format explicitly
+                dataType: 'json',
+                "rejectUnauthorized": false, //跳过HTTPS 的验证
+                headers: {
+                    //'Transfer-Encoding': 'chunked', // 没有这个，无法body-parser
+                    'Content-Type': 'application/x-www-form-urlencoded',
+                    'Content-Length': postData.length
+                },
+            });
 
-        const result = await ctx.curl(urlBase, {
-            //timeout: [ 1000, 30000 ],
-            // method is required
-            method: 'POST',
-            // telling HttpClient to send data as JSON by contentType
-            contentType: 'json',
-            data: postData,
-            // telling HttpClient to process the return body as JSON format explicitly
-            dataType: 'json',
-            "rejectUnauthorized": false, //跳过HTTPS 的验证
-            headers: {
-                //'Transfer-Encoding': 'chunked', // 没有这个，无法body-parser
-                'Content-Type': 'application/x-www-form-urlencoded',
-                'Content-Length': postData.length
-            },
-        });
+            let jsonRet = result.data;
+            if (null == jsonRet) {
+                this.logger.error("[dora.review_withdraw]生成订单失败,需要归还已扣金额,Dora请求失败", company_order_no);
+                jsonUpdate.order_status = WithdrawStatus["dora_req_withdraw_fail"];
 
-        let jsonRet = result.data;
-        if (null == jsonRet) {
-            this.logger.error("[dora.withdraw]生成订单失败,需要归还已扣金额,Dora请求失败", company_order_no);
-        } else {
-            console.log(result.data);
-            //{ status: 0, code: -9999, msg: '商户可利用余额不足', data: null }
-            if (200 !== jsonRet.status || !jsonRet.data) {
-                //error
-                this.logger.error("[dora.withdraw]生成订单失败,需要归还已扣金额,Dora返回下单请求报错", company_order_no, jsonRet);
+                ctx.body = {
+                    "code": 1005,
+                    "message": "请求支付平台生成支付订单，失败！", 
+                    "company_order_no": company_order_no,
+                };
+
             } else {
+                console.log(result.data);
+                //{ status: 0, code: -9999, msg: '商户可利用余额不足', data: null }
+                if (200 !== jsonRet.status || !jsonRet.data) {
+                    jsonUpdate.order_status = WithdrawStatus["dora_return_withdraw_fail"];
+                    //error
+                    this.logger.error("[dora.review_withdraw]生成订单失败,需要归还已扣金额,Dora返回下单请求报错", company_order_no, jsonRet);
+                    ctx.body = {
+                        "code": 1006,
+                        "message": "请求支付平台生成支付订单，失败！--" + jsonRet.msg,
+                        "company_order_no": company_order_no,
+                    };
+                } else {
 
-                this.logger.error("[dora.withdraw]生成订单成功", company_order_no, jsonRet);
-                /*
-                {
-                    "status": 200,
-                    "msg": "init Apply withdrawl order suc",
-                    "data": {
-                        "company_id": "14",
-                        "company_order_no": "AP201806290113664882460",
-                        "trade_no": "105308",
-                        "player_id": "123456",
-                        "error_msg": null,
-                        "status": 0,
-                        "order_amount": 2000.0,
-                        "break_url": " https://countermobile.xi33.net/DoraCounterMobile/Withdraw/ResultPage?company_id=14&company_order_no=AP201806290113664882460&trade_no=105308&amount=2000.0000&player_id=123456&player_nick=&player_name=%E6%96%BD%E8%BE%89&due_date=1530262169070&sign=c846838d7de6b66f5f3e1766bc5ccd0c",
-                        "due_date": 1530262169070,
-                        "sign": null
+                    this.logger.error("[dora.review_withdraw]生成订单成功", company_order_no, jsonRet);
+                    //支付公司的订单
+                    jsonUpdate.trade_no = jsonRet.data.trade_no;
+
+                    ctx.body = {
+                        "code": 1000,
+                        "message": "请求支付平台生成支付订单， 成功！--" + jsonRet.data.trade_no,
+                        "company_order_no": company_order_no,
+                    };
+        
+                    /*
+                    {
+                        status: 200,
+                        code: 200,
+                        msg: '成功',
+                        data:
+                        {
+                            company_id: '54',
+                            company_order_no: '54_20180713095547002900',
+                            trade_no: '54_20180713095547002900',
+                            player_id: '501',
+                            error_msg: null,
+                            status: 0,
+                            order_amount: 1.42,
+                            break_url: 'https://counterpc.xi33.net/DoraCounter/withdrawal/ResultPage?company_id=54&company_order_no=20180713095520752501&trade_no=54_20180713095547002900&amount=1.42&player_id=1095&player_nick=null&player_name=%E6%A8%8A%E5%98%89&player_url=&due_date=2018-07-13 10:15:47&terminal=1&sign=494a177a5735d7458d6521724a462488&',
+                            due_date: '2018-07-13T10:15:47.533+08:00',
+                            sign: '494a177a5735d7458d6521724a462488'
+                        }
                     }
-                }
-                */
-                //把返回数据更新到db
+                    */
 
+                    //把返回数据更新到db
+
+                }
             }
+        } catch (error) {
+            jsonUpdate.order_status = WithdrawStatus["request_error"];
+            this.logger.error("[dora.review_withdraw]Dora提现请求异常,可能网络原因", company_order_no,error);
+
+            ctx.body = {
+                "code": 1007,
+                "message": "请求支付平台生成支付订单，失败！-- Dora提现请求异常,可能网络原因",
+                "company_order_no": company_order_no,
+            };
+
         }
 
-
-        //如果失败 --> 修改订单状态 --> 至失败的原因 --> 人工审核，补偿、反还
-
-        ctx.body = {
-            code: 0,
-            message: 'OK',
-            //data: res
-        };
-
+        //if(jsonUpdate.order_status != WithdrawStatus["wait_for_payment"]){
+            let _json_condition_2 = {
+                _id: retQuery[0]._id,
+                //order_status: WithdrawStatus["under_review"],
+            };
+            let retUpdate = await this.ctx.service.payment.update(ctx.model.PaymentWithdraw, _json_condition_2, jsonUpdate);
+        
+        //}
 
         await redis.del(this.getLockKey(company_order_no));
         ctx.helper.end("review_withdraw");
