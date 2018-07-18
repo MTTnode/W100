@@ -28,6 +28,8 @@ module.exports = app => {
   router.post('/w100/v1/marketwarn/delMarketwarn', controller.v1.marketwarn.index.delMarketwarn);//删除预警
   router.get('/w100/v1/marketwarn/getMarketwarn', controller.v1.marketwarn.index.getMarketwarn);//查看预警
   router.get('/w100/v1/marketwarn/getMarketwarnList', controller.v1.marketwarn.index.getMarketwarnList);//查看预警列表
+  router.get('/w100/v1/payment/manager/switch', controller.v1.payment.manager.getSwitchInfo);//获取平台的开关状态
+
   //新增自选
   router.post('/w100/v1/quot/addquot', controller.v1.aid.selQuot.addQuot);
    //删除自选
@@ -60,6 +62,8 @@ module.exports = app => {
   router.post('/ad/role/usrLogin',  controller.ad.role.usrLogin);//后台用户登陆
   router.post('/ad/role/resetUser',  controller.ad.role.resetUser);//后台用户重置
   router.get('/ad/order/payment_orderList',  controller.ad.paymentorder.orderList);//获取dora支付的列表
+  router.get('/ad/payment/manager/getSwitch', controller.v1.payment.manager.getSwitch);//获取充值平台的开关状态
+  router.get('/ad/payment/manager/setSwitch', controller.v1.payment.manager.setSwitch);//修改充值平台的开关状态
 
   router.get('*', async (ctx, next) => {
     ctx.service.httpDefend.addHttp(ctx, 404);
