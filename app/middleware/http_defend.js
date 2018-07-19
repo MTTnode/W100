@@ -7,28 +7,6 @@ module.exports = () => {
     // return await next();
     // end add cc 临时放过
 
-    //token检查 tim 20180628 修改 middleware
-    // if(!ctx.headers.token || (ctx.headers.token.length != 32 && ctx.headers.token != 'token')) {
-    //   let paramItem = {
-    //     'ip': '',
-    //     'type': 0,
-    //     'uid': '',
-    //     'start_time': moment().format("YYYY-MM-DD HH:mm:ss"),
-    //     'end_time': moment().add(1, 'days').format("YYYY-MM-DD HH:mm:ss"),
-    //     'content': ''
-    //   };
-    //   paramItem.ip = ctx.headers['x-forwarded-for'].split(',')[0];
-    //   paramItem.ip = ctx.ip;
-    //   if(ctx.headers.uid != '-1'){
-    //     paramItem.uid = ctx.headers.uid;
-    //   }
-    //   paramItem.content = "token异常";
-    //   if(paramItem.ip || paramItem.uid){
-    //     await ctx.model.WeexBl.create(paramItem);
-    //   }
-    //   return ctx.body = { code: 1002, message: '你的账户或IP已被封，请联系系统管理员！' };
-    // }
-
     let resBody = { code: 1002, message: '' };
     let arr = [];
     if(ctx.headers['x-forwarded-for'].split(',')[0]){
@@ -50,9 +28,26 @@ module.exports = () => {
     });
     const listRes = await ctx.model.WeexWl.find({'$or': arr});
     if(listRes.length < 1){
+      //检查黑名单列表
+      let arr = [];
+      arr.push({
+        'ip': _this.headers['x-forwarded-for'].split(',')[0]
+      });
+      if(_this.headers.uid != '-1'){
+        arr.push({
+          'uid': _this.headers.uid
+        });
+      }
+      const blacklistRes = await _this.model.WeexBl.find({'$or': arr});
+      if(blacklistRes.length > 0){
+        msg = blacklistRes[0].content;
+        ctx.body = msg;
+        return await next();
+      }
+
       const msg = await ctx.defend.httpHandle(ctx);
       if(msg){
-        resBody.message = "你的账户或IP已被封，请联系系统管理员！";
+        resBody.message = "您的账户或IP已被封，请联系客服！";
         ctx.service.httpDefend.addHttp(ctx, 1002);
         return ctx.body = resBody;
       }
