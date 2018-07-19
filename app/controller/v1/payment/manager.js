@@ -79,13 +79,13 @@ class ManagerController extends Controller {
             if ("0" == arrRecharge[key]) {
                 if (DORA_PAY == key) {
                     //关闭支付宝
-                    retSwitch.recharge.zhifubao = 0;
+                    retSwitch.recharge.zhifubao = "0";
                 } else if (USDT_PAY == key) {
                     //关闭usdt
-                    retSwitch.recharge.usdt = 0;
+                    retSwitch.recharge.usdt = "0";
                 } else if (DADDY_PAY == key) {
                     //关闭银行卡
-                    retSwitch.recharge.bank = 0;
+                    retSwitch.recharge.bank = "0";
                 }
             }
         });
@@ -97,13 +97,13 @@ class ManagerController extends Controller {
             if ("0" == arrWithdraw[key]) {
                 if (DORA_PAY == key) {
                     //关闭支付宝
-                    retSwitch.withdraw.zhifubao = 0;
+                    retSwitch.withdraw.zhifubao = "0";
                 } else if (USDT_PAY == key) {
                     //关闭usdt
-                    retSwitch.withdraw.usdt = 0;
+                    retSwitch.withdraw.usdt = "0";
                 } else if (DADDY_PAY == key) {
                     //关闭银行卡
-                    retSwitch.withdraw.bank = 0;
+                    retSwitch.withdraw.bank = "0";
                 }
             }
         });
