@@ -193,6 +193,11 @@ class ManagerController extends Controller {
         let value = ctx.arg.value;
         let type = ctx.arg.type;
 
+        //加判断只允许0 1两种状态
+        if(value != "1"){
+            value = "0";
+        }
+
         let keyRedis = "";
         if ("recharge" == type) {
             keyRedis = strKey_Recharge;
