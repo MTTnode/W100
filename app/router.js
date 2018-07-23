@@ -66,11 +66,11 @@ module.exports = app => {
   router.get('/ad/payment/manager/setSwitch', controller.v1.payment.manager.setSwitch);//修改充值平台的开关状态
 
   router.get('*', async (ctx, next) => {
-    ctx.service.httpDefend.addHttp(ctx, 404);
+    ctx.service.httpDefend.updateHttp(ctx, 404);
     ctx.body = { status : 404, message: 'Not Found' };
   });
   router.post('*', async (ctx, next) => {
-    ctx.service.httpDefend.addHttp(ctx, 404);
+    ctx.service.httpDefend.updateHttp(ctx, 404);
     ctx.body = { status : 404, message: 'Not Found' };
   });
 };

@@ -26,6 +26,9 @@ module.exports = () => {
     arr.push({
       'url': urlStr
     });
+    //记录http请求
+    await ctx.service.httpDefend.addHttp(ctx, 200);
+
     const listRes = await ctx.model.WeexWl.find({'$or': arr});
     if(listRes.length < 1){
       //检查黑名单列表
@@ -40,15 +43,18 @@ module.exports = () => {
       }
       const blacklistRes = await ctx.model.WeexBl.find({'$or': arr});
       if(blacklistRes.length > 0){
-        msg = blacklistRes[0].content;
-        ctx.body = msg;
-        return await next();
+        let res = {
+          code: 1002,
+          data: null,
+          msg: blacklistRes[0].content
+        };
+        // await ctx.service.httpDefend.addHttp(ctx, 1002);
+        return ctx.body = res;
       }
-
       const msg = await ctx.defend.httpHandle(ctx);
       if(msg){
         resBody.message = "您的账户或IP已被封，请联系客服！";
-        ctx.service.httpDefend.addHttp(ctx, 1002);
+        // await ctx.service.httpDefend.addHttp(ctx, 1002);
         return ctx.body = resBody;
       }
     }
