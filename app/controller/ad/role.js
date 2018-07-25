@@ -47,11 +47,7 @@ class RoleController extends Controller {
       };
     }else{
       let res = await service.role.addUser(params);
-      ctx.body = {
-        code: 0,
-        message: 'OK',
-        data: res
-      };
+      ctx.body = res;
     }
 
     ctx.helper.end("addUser");
@@ -66,13 +62,24 @@ class RoleController extends Controller {
     
     let params = ctx.request.body || {};
     let res = await service.role.resetUser(params);
-    ctx.body = {
-      code: 0,
-      message: 'OK',
-      data: res
-    };
+    ctx.body = res;
 
     ctx.helper.end("resetUser");
+  }
+
+  async updateUser() {
+    const { ctx, service, app } = this;
+
+    ctx.helper.pre("updateUser", {
+      name: { type: 'string' },
+      role: { type: 'number' }
+    });
+    
+    let params = ctx.request.body || {};
+    let res = await service.role.updateUser(params);
+    ctx.body = res;
+
+    ctx.helper.end("updateUser");
   }
 
   async delUser() {

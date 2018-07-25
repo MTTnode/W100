@@ -24,7 +24,7 @@ module.exports = {
             ptime
         );
         //记录http请求
-        this.ctx.service.httpDefend.addHttp(this.ctx, 200);
+        // this.ctx.service.httpDefend.addHttp(this.ctx, 200);
 
         //输出json格式化日志
         let jsonstring = _.merge(this.ctx.arg, this.ctx.body);

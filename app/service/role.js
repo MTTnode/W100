@@ -137,6 +137,39 @@ class RoleService extends Service {
     return res;
   }
 
+  async updateUser(params) {
+    const {ctx, service, app} = this;
+    let res = '';
+    let data = await ctx.model.WeexUser.find({name: params.name});
+    if(data.length > 0){
+      let msg = '';
+      try {
+        await ctx.model.WeexUser.update({ name: params.name }, {
+          $set: {
+            role: params.role
+          }
+        });
+        msg = '修改成功';
+      } catch (error) {
+        console.log(error);
+        msg = '修改失败';
+      }
+    
+      res = {
+        code: 0,
+        data: msg,
+        message: "OK"
+      };
+    }else{
+      res = {
+        code: -1,
+        data: null,
+        message: "该用户不存在"
+      };
+    }
+    return res;
+  }
+
   async userList() {
     const {ctx, service, app} = this;
     let res = '';

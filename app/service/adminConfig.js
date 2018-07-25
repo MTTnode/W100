@@ -1,5 +1,6 @@
 'use strict';
 const Service = require('egg').Service;
+const moment = require("moment");
 
 class AdminConfigService extends Service {
   async getBanner() {
@@ -71,7 +72,7 @@ class AdminConfigService extends Service {
   async getBlacklist(curPage) {
     const {ctx, service, app} = this;
     let blacklist1 = await ctx.model.WeexBl.find({});
-    let blacklist2 = await ctx.model.WeexBl.find({}).limit(10).skip(curPage*10);
+    let blacklist2 = await ctx.model.WeexBl.find({}).limit(10).skip(curPage*10).sort({ start_time: -1 });
     let blacklists = {};
     blacklists.list = blacklist2;
     blacklists.total = blacklist1.length;

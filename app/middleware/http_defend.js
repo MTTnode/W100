@@ -46,7 +46,7 @@ module.exports = () => {
         let res = {
           code: 1002,
           data: null,
-          msg: blacklistRes[0].content
+          msg: "您的账户或IP已被封，请联系客服！"
         };
         // await ctx.service.httpDefend.addHttp(ctx, 1002);
         return ctx.body = res;

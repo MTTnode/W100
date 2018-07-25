@@ -58,6 +58,7 @@ module.exports = app => {
   router.get('/ad/order/orderList',  controller.ad.order.orderList);//app版本列表
   router.get('/ad/role/userList',  controller.ad.role.userList);//后台用户列表
   router.post('/ad/role/addUser',  controller.ad.role.addUser);//添加后台用户
+  router.post('/ad/role/updateUser',  controller.ad.role.updateUser);//修改后台用户
   router.post('/ad/role/delUser',  controller.ad.role.delUser);//删除后台用户
   router.post('/ad/role/usrLogin',  controller.ad.role.usrLogin);//后台用户登陆
   router.post('/ad/role/resetUser',  controller.ad.role.resetUser);//后台用户重置

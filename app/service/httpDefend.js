@@ -17,20 +17,8 @@ class HttpDefendService extends Service {
     param.token = el.headers.token;
     let time = moment().format("YYYY-MM-DD HH:mm:ss");
     param.create_time = time;
-    let arr = [];
-    arr.push({
-      'ip': el.headers['x-forwarded-for'].split(',')[0]
-    });
-    if(el.headers.uid != -1){
-      arr.push({
-        'uid': el.headers.uid
-      });
-    }
-    let json = await ctx.model.WeexBl.find({'$or': arr});
-    if(json.length < 1){
-      //记录http异常不处理
-      await ctx.model.WeexHttp.create(param);
-    }
+    
+    await ctx.model.WeexHttp.create(param);
   }
 
   async updateHttp(el, code) {

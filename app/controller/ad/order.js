@@ -11,8 +11,8 @@ class OrderController extends Controller {
         });
         let param = {};
 
-        if(ctx.query.order_number){
-          param.order_number = ctx.query.order_number;
+        if(ctx.query._id){
+          param._id = app.mongoose.Types.ObjectId(ctx.query._id);
         }
         if(ctx.query.user){
           param.uid = ctx.query.user;
