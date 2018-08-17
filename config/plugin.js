@@ -83,10 +83,10 @@ exports.weexToken = {
 };
 
 //egg-logrotator
-exports.logrotator = {
-  enable: true,
-  package: 'egg-logrotator'
-};
+// exports.logrotator = {
+//   enable: true,
+//   package: 'egg-logrotator'
+// };
 
 //egg-mongoose
 exports.mongoose = {

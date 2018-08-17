@@ -38,6 +38,12 @@ module.exports = app => {
    router.get('/w100/v1/quot/isQuot', controller.v1.aid.selQuot.isQuot);
    //查看自选信息
    router.get('/w100/v1/quot/quotInfo', controller.v1.aid.selQuot.quotInfo);
+   //实名认证
+   router.post('/w100/v1/identy/usrIdenty', controller.v1.identy.index.usrIdenty);
+   //实名认证查询
+   router.get('/w100/v1/identy/getIdenty', controller.v1.identy.index.getIdenty);
+
+
 
   //////后台接口
   router.get('/ad/stat', controller.ad.statistics.index); //后台管理统计
@@ -65,6 +71,8 @@ module.exports = app => {
   router.get('/ad/order/payment_orderList',  controller.ad.paymentorder.orderList);//获取dora支付的列表
   router.get('/ad/payment/manager/getSwitch', controller.v1.payment.manager.getSwitch);//获取充值平台的开关状态
   router.get('/ad/payment/manager/setSwitch', controller.v1.payment.manager.setSwitch);//修改充值平台的开关状态
+  router.get('/v1/identy/getIdentyList', controller.v1.identy.index.getIdentyList);  //实名认证列表
+  router.post('/v1/identy/setIdenty', controller.v1.identy.index.setIdenty);  //修改实名认证状态
 
   router.get('*', async (ctx, next) => {
     ctx.service.httpDefend.updateHttp(ctx, 404);

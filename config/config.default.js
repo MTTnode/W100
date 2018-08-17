@@ -12,14 +12,15 @@ module.exports = appInfo => {
   };
 
   // 加载 errorHandler 中间件
-  config.middleware = ['httpDefend', 'errorHandler'];
+  config.middleware = ['errorHandler'];
 
   // use for cookie sign key, should change to your own and keep security
   config.keys = appInfo.name + '_1524152383762_782';
 
   config.weexHttps = {
     client: {
-      url: "https://wwwapp.weex.com:8443/"
+      // url: "https://wwwapp.weex.com:8443/"
+      url: "http://www.test.mtt.com/"
       // url: "https://www.bithe.com/"
     }
   };
@@ -27,15 +28,16 @@ module.exports = appInfo => {
   //token检查
   config.weexToken = {
     client: {
-      url: "http://wwwapp.weex.com:8000/"
+      // url: "http://wwwapp.weex.com:8000/"
+      url: "http://www.test.mtt.com/"
       // url: "https://www.bithe.com/"
     }
   };
 
   config.weexWs = {
     client: {
-      url: "wss://wsapp.weex.com:8443"
-      // url: "wss://ws.bithe.com"
+      // url: "wss://wsapp.weex.com:8443"
+      url: "wss://ws.bithe.com"
     }
   };
 

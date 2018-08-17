@@ -4,7 +4,7 @@ module.exports = () => {
   return async function httpDefend(ctx, next) {
     //code 1002 代表被屏蔽
     // begin add cc 临时放过
-    // return await next();
+    return await next();
     // end add cc 临时放过
 
     let resBody = { code: 1002, message: '' };

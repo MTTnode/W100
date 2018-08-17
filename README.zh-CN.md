@@ -11,15 +11,72 @@
 ### 本地开发
 
 ```bash
-$ npm i
+下载代码：
+git clone https://github.com/MTTnode/W100.git
+安装以来
+$ npm install
 $ npm run dev
 $ open http://localhost:7001/
 ```
 
+### 配置文件
+
+目录：
+/W100/config/config.default.js
+
+//mongoose配置
+config.mongoose = {
+  url: 'mongodb://127.0.0.1:27017/weexdb',
+  options: {
+  }
+};
+
+//redis配置
+config.redis = {
+  client: {
+    port: 6379,
+    host: '140.143.230.232',
+    password: 'xiaotao123',
+    db: 0
+  }
+}
+
+//py环境配置
+config.weexHttps = {
+  client: {
+    // url: "https://wwwapp.weex.com:8443/"
+    url: "http://www.test.mtt.com/"
+    // url: "https://www.bithe.com/"
+  }
+};
+config.weexToken = {
+  client: {
+    // url: "http://wwwapp.weex.com:8000/"
+    url: "http://www.test.mtt.com/"
+    // url: "https://www.bithe.com/"
+  }
+};
+
+//ws配置
+config.weexWs = {
+  client: {
+    // url: "wss://wsapp.weex.com:8443"
+    url: "wss://ws.bithe.com"
+  }
+};
+
 ### 部署
 
 ```bash
+下载代码：
+git clone https://github.com/MTTnode/W100.git
+插件安装依赖：
+进入/W100/lib/plugin插件目录，分别安装依赖，npm install
+安装以来
+$ npm install
+启动服务
 $ npm start
+停止服务
 $ npm stop
 ```
 

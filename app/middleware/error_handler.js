@@ -23,7 +23,8 @@ module.exports = () => {
             ctx.status = status;
             
             ctx.app.logger.error("",
-              ctx.headers['x-forwarded-for'].split(',')[0],
+              ctx.ip,
+              // ctx.headers['x-forwarded-for'].split(',')[0],
               JSON.stringify(ctx.arg),
               JSON.stringify(ctx.body), "end",
               new Date().getTime() - ctx.arg._time);
