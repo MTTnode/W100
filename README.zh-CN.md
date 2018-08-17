@@ -41,7 +41,7 @@ config.redis = {
   }
 }
 
-//py环境配置
+//exchange_web配置
 config.weexHttps = {
   client: {
     // url: "https://wwwapp.weex.com:8443/"
